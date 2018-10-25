@@ -30,8 +30,8 @@ public class Application extends org.springframework.boot.web.support.SpringBoot
 
 
 	public static void go() {
-		String user = "s225036";
-		String password = "9ewsgfwN";
+		String user = "";
+		String password = "";
 		String host = "se.ifmo.ru";
 		int port = 2222;
 		try {
