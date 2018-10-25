@@ -23,11 +23,11 @@ public class ControllerServlet extends HttpServlet {
         out.println("<p>Y: "+y+"</p>");
         out.println("<p>R: "+r+"</p>");
        if(x==null || y==null || r==null){
-            out.println("<p>Зашли в иф</p>");
+            
             request.getServletContext().getRequestDispatcher("/index.jsp").forward(request,response);
 
         }else{
-            out.println("<p>Зашли в else</p>");
+           
             request.getServletContext().getRequestDispatcher("/AreaCheckServlet").forward(request,response);
 out.write("sdsd");
         }
@@ -37,9 +37,7 @@ out.write("sdsd");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        //PrintWriter out=response.getWriter();
-      //  out.println("Hello");
+      
         doPost(request,response);
-      //  request.getServletContext().getRequestDispatcher("/AreaCheckServlet").forward(request,response);
     }
 }
