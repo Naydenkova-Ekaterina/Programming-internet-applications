@@ -23,21 +23,4 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         registry.addViewController("/main").setViewName("main");
 
     }
-
-
-
-  /*  @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        if (!registry.hasMappingForPattern("/webjars/**")) {
-            registry.addResourceHandler("/webjars/**").addResourceLocations(
-                    "classpath:/META-INF/resources/webjars/");
-        }
-        if (!registry.hasMappingForPattern("/**")) {
-            registry.addResourceHandler("/**").addResourceLocations(
-                    RESOURCE_LOCATIONS);
-        }
-    }
-*/
-
-
 }
