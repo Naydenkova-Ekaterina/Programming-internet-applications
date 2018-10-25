@@ -1,0 +1,87 @@
+@font-face {
+    font-family: 'pixel';
+    src: url('backto1982-webfont.woff'),
+url(backto1982-webfont.svg);
+}
+.header{
+    font-family: pixel;
+    color: white;
+    font-size: 30px;
+    height: 10%;
+    background-color: black;
+    display: block;
+    margin-top: -8px;
+    text-align: center;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+*{
+    background-color: #111;
+}
+
+.forImage{
+    background-image: url("second.gif");
+    width: 700px;
+    height: 400px;
+    display: inline-block;
+    background-repeat: no-repeat;
+}
+#curDT{
+    margin-top: 50px;
+    margin-left: 0px;
+    font-size: 25px;
+    background-color: transparent;
+    display: inline-block;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 10px;
+    border: none;
+    font: normal 28px/normal "Warnes", Helvetica, sans-serif;
+    color: rgba(255,255,255,1);
+    text-decoration: none;
+    text-align: center;
+    -o-text-overflow: clip;
+    text-overflow: clip;
+    white-space: pre;
+    text-shadow: 0 0 10px rgba(255,255,255,1) , 0 0 20px rgba(255,255,255,1) , 0 0 30px rgba(255,255,255,1) , 0 0 40px #ff00de , 0 0 70px #ff00de , 0 0 80px #ff00de , 0 0 100px #ff00de ;
+    -webkit-transition: all 200ms cubic-bezier(0.42, 0, 0.58, 1);
+    -moz-transition: all 200ms cubic-bezier(0.42, 0, 0.58, 1);
+    -o-transition: all 200ms cubic-bezier(0.42, 0, 0.58, 1);
+    transition: all 200ms cubic-bezier(0.42, 0, 0.58, 1);
+}
+.main{
+    text-align: center;
+}
+a{
+    text-decoration: none;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 15px;
+    padding-right: 15px;
+    background-color: crimson;
+    color: white;
+}
+
+
+#curDT:hover {
+    text-shadow: 0 0 10px rgba(255,255,255,1) , 0 0 20px rgba(255,255,255,1) , 0 0 30px rgba(255,255,255,1) , 0 0 40px #00ffff , 0 0 70px #00ffff , 0 0 80px #00ffff , 0 0 100px #00ffff ;
+}
+
+.enjoy-css{
+    color: #cf63a8;
+    font:2.4em pixel, ‘Century Gothic’, AppleGothic, sans-serif;
+    padding:14px;
+    background:url(overlay.png) repeat-x center #000000;background-color: rgb(0, 0, 0);
+    border:1px solid #9d9cff;
+    -moz-border-radius:10px;-webkit-border-radius:10px;border-radius:10px;
+    border-bottom:1px solid #9f9f9f;
+    -moz-box-shadow:inset 0 1px 0 rgba(7, 7, 7, 0.5);-webkit-box-shadow:inset 0 1px 0 rgba(7, 7, 7, 0.5);box-shadow:inset 0 1px 0 rgba(7, 7, 7, 0.5);
+    cursor:pointer;
+}
+
+.enjoy-css:hover{background-color: rgb(126, 42, 190);
+    color: white;}
+
+.enjoy-css:active{position:relative;top:2px;  }

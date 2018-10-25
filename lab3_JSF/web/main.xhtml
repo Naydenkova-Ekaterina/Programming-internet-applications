@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+
+
+<h:head>
+    <title>Стартовая страница</title>
+<link rel="stylesheet" href="resources/css/styleMain.css"></link>
+
+</h:head>
+
+<h:body>
+
+    <div class="header">
+        Ковалёва А.А., Найденкова Е.Д., группа: P3200, вариант: 9951
+    </div>
+
+
+    <div id="InputForm">
+        <h:form id="formId">
+
+
+<div class="leftBlock">
+            <div class="error_mes" id="x_error">Некорректное значение X.</div>
+            <div id="x_col">
+                Выберите значение X:
+                <br/>
+                <h:commandButton styleClass="x" type="button" value="-5" name="xValue" onclick="getXValue(this)"></h:commandButton>
+                <h:commandButton styleClass="x" type="button" value="-4" name="xValue" onclick="getXValue(this)"></h:commandButton>
+                <h:commandButton styleClass="x" type="button" value="-3" name="xValue" onclick="getXValue(this)"></h:commandButton>
+                <h:commandButton styleClass="x" type="button" value="-2" name="xValue" onclick="getXValue(this)"></h:commandButton>
+                <h:commandButton styleClass="x" type="button" value="-1" name="xValue" onclick="getXValue(this)"></h:commandButton>
+                <h:commandButton styleClass="x" type="button" value="0" name="xValue" onclick="getXValue(this)"></h:commandButton>
+                <h:commandButton styleClass="x" type="button" value="1" name="xValue" onclick="getXValue(this)"></h:commandButton>
+                <h:commandButton styleClass="x" type="button" value="2" name="xValue" onclick="getXValue(this)"></h:commandButton>
+                <h:commandButton styleClass="x" type="button" value="3" name="xValue" onclick="getXValue(this)"></h:commandButton>
+                <h:inputHidden id = "hiddenX"  value="#{pointsbean.x}" required="true"
+                             requiredMessage="first name is required"/>
+                <h:message id="m1" for="hiddenX" style="color:red"/> <p></p>
+
+
+            </div>
+
+            <div id="y_col">
+                <p>Выберите значение Y:</p>
+                <h:inputText id = "yValue"  value="#{pointsbean.y}"  validatorMessage="Значение Y от -3 до 5">
+                    <f:validateDoubleRange minimum="-3.0" maximum="5.0" />
+                </h:inputText>
+                <h:message id="errorMesY" for="formId:yValue" showDetail="true"  style="color:red" />
+                <br/>
+            </div>
+
+            <div class="error_mes" id="r_error">Некорректное значение R.</div>
+            <div id="r_col">
+                <p>Выберите значение R:</p>
+
+                <p:inputText readonly="true"  id="rValue" required="true"/>
+                <p:slider for="rValue"
+                          minValue="2"
+                          maxValue="5"
+                          step="0.1"
+                          style="width: 70%;"
+                          onSlideEnd="rChange()"  />
+                <h:inputHidden id="rValueHid" value="#{pointsbean.r}"></h:inputHidden>
+
+            </div>
+            <script type="text/javascript">
+                document.getElementById("formId:rValue").value=2;
+                document.getElementById("formId:rValueHid").value=2;
+            </script>
+
+
+
+    <p:commandButton  styleClass="submit" id="SubButton" value="Submit" onclick="clickSub()" action="#{pointsbean.addNewPoint}" update="formId:errorMesY"/>
+</div>
+
+           <canvas class="brd" id="graph" onclick="setPoint(event)"  width="600" height="600" ></canvas>
+
+            <div class="leftBlock2" id="previous-results">
+
+                <p:commandButton styleClass="submit refresh" value="Refresh data" update="formId:result_table"></p:commandButton>
+
+                <h:dataTable  id="result_table"  var="obj"  value="#{pointsbean.points}"
+                    styleClass="book-table"
+                    headerClass="book-table-header"
+                    rowClasses="book-table-odd-row,book-table-even-row">
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="X">
+                            </h:outputText>
+                        </f:facet>
+                        <h:outputText value="#{obj.x}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="Y">
+                            </h:outputText>
+                        </f:facet>
+                        <h:outputText value="#{obj.y}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="R">
+                            </h:outputText>
+                        </f:facet>
+                        <h:outputText value="#{obj.r}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="In area">
+                            </h:outputText>
+                        </f:facet>
+                        <h:outputText value="#{obj.areareach}"/>
+                    </h:column>
+                </h:dataTable>
+            </div>
+
+<div class="clear">
+
+    <p>Выключай, страшно</p>
+    <br/>
+    <h:graphicImage alt="" url="resources/css/cat.gif"></h:graphicImage>
+    <br/>
+    <h:commandLink styleClass="submit" action="index">To start page</h:commandLink>
+
+</div>
+        </h:form>
+    </div>
+
+
+        <h:form id="hiddenForm" >
+            <h:inputHidden id="hiddenX2" value="#{pointsbean.x}"></h:inputHidden>
+            <h:inputHidden id="hiddenY" value="#{pointsbean.y}"></h:inputHidden>
+            <h:inputHidden id="hiddenR" value="#{pointsbean.r}"></h:inputHidden>
+            <p:commandButton style="display: none" id="hiddenSubmit" value="Submit"  action="#{pointsbean.addNewPoint}"/>
+
+        </h:form>
+
+
+   <script type="text/javascript" src="validation.js"></script>
+    <script type="text/javascript">
+        document.getElementsByClassName("x")[0].click();
+    </script>
+
+</h:body>
+
+
+</html>
