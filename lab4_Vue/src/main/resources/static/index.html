@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Start page</title>
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="stylesheets/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.3/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.3/axios.min.js"></script>
+</head>
+<body>
+
+<div id="header">
+    {{ message }}
+</div>
+
+<div>
+<div id="fake-nav">
+    <a class="link-btn" href="#register" @click="open('register', $event)">Register</a>
+    <a class="link-btn" href="#login" @click="open('login', $event)">Login</a>
+    <a class="link-btn" href="main.html">To main page</a>
+</div>
+</div>
+<div class="user-modal-container" :class="{ 'active': active }" id="login-modal" @click="close">
+    <div class="user-modal">
+        <ul class="form-switcher">
+            <li @click="flip('register', $event)"><a href="" id="register-form">Register</a>
+
+            </li>
+            <li @click="flip('login', $event)"><a href="" id="login-form">Login</a>
+
+            </li>
+        </ul>
+        <div class="form-register" :class="{ 'active': active == 'register' }" id="form-register">
+            <div class="error-message" v-text="registerError"></div>
+            <input type="text" name="name" placeholder="Name" v-model="registerName" @keyup.enter="submit('register', $event)">
+            <input type="password" name="password" placeholder="Password" v-model="registerPassword" @keyup.enter="submit('register', $event)">
+            <input type="submit" :class="{ 'disabled': submitted == 'register' }" @click="submit('register', $event)" v-model="registerSubmit" id="registerSubmit">
+            <div class="links"> <a href="" @click="flip('login', $event)">Already have an account?</a>
+
+            </div>
+        </div>
+        <div class="form-login" :class="{ 'active': active == 'login' }" id="form-login">
+
+            <div class="error-message" v-text="loginError"></div>
+
+            <input name="username" type="text" name="user" placeholder="Username" v-model="loginUser" @keyup.enter="submit('login', $event)">
+            <input name="password" type="password" name="password" placeholder="Password" v-model="loginPassword" @keyup.enter="submit('login', $event)">
+            <input type="submit" @click="submit('login', $event)" >
+
+            </div>
+        </div>
+
+    </div>
+
+
+<form method="post" action="/index" class="hiddenForm">
+    <input type="text" name="username" id="user">
+    <input type="password" name="password" id="pas">
+    <input type="submit" id="auth">
+</form>
+
+
+
+<script src="scr.js"></script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Main page</title>
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.3/axios.min.js"></script>
+    <link rel="stylesheet" href="stylesheets/styleMain.css">
+</head>
+<body>
+
+
+<div class="container">
+    <div class="flex_div">
+<form id="formCoord">
+    <div id="xLabel">{{message}}
+    <select id="xValue">
+        <option value="-3">-3</option>
+        <option value="-2">-2</option>
+        <option value="-1">-1</option>
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+    </select>
+    </div>
+
+    <div id="yLabel">{{message}}
+    <input id="yValue" v-model="message" placeholder="значение от -3 до 3">
+    </div>
+
+    <div id="rLabel">Выберите значение R:
+    <select id="rValue" @click="draw">
+        <option value="-3">-3</option>
+        <option value="-2">-2</option>
+        <option value="-1">-1</option>
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+    </select>
+    </div>
+
+        <input id="submitButton" type="button" value="Submit" @click="send">
+    </form>
+    </div>
+<div class="flex_div">
+<canvas class="brd" id="graph"  @click="setPoint"  width="600" height="600" ></canvas>
+</div>
+
+    <div>
+<form>
+<input type="button" id="refreshButton" value="Refresh Button" @click="refresh">
+</form>
+<!-- component template -->
+<script type="text/x-template" id="grid-template">
+    <table>
+        <thead>
+        <tr>
+            <th v-for="key in columns"
+                @click="sortBy(key)"
+                :class="{ active: sortKey == key }">
+                {{ key | capitalize }}
+                <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
+          </span>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="entry in filteredData">
+            <td v-for="key in columns">
+                {{entry[key]}}
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</script>
+
+<!-- demo root element -->
+<div id="demo">
+    <form id="search">
+        Search <input name="query" v-model="searchQuery">
+    </form>
+    <demo-grid
+            :data="gridData"
+            :columns="gridColumns"
+            :filter-key="searchQuery">
+    </demo-grid>
+</div>
+        <form action="/index" method="post">
+            <input type="submit" value="Sign Out"/>
+        </form>
+    </div>
+
+
+</div>
+
+<script src="scrMain.js"></script>
+</body>
+</html>
