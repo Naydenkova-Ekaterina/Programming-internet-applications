@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>crudArena</title>
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.25.0/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.3/axios.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/styleCrudCity.css" />
+
+</head>
+<body>
+
+
+<div class="wrapper">
+
+    <div id="content">
+        <nav>
+            <a href=""><img src="images/logo.png" /></a>
+            <table id="menu">
+                <tr>
+                    <td>
+                        <ul id="nav">
+                            <li >
+
+                                <a href="#" title="Shop">BUY</a>
+
+                                <ul>
+
+                                    <li><a href="BuyTickets.html">Tickets</a></li>
+
+                                    <li><a href="BuyGladiators.html">Gladiators</a></li>
+                                    <li><a href="BuyWeapons.html">Weapons</a></li>
+                                    <li><a href="BuyArmors.html">Armors</a></li>
+
+                                </ul>
+
+                            </li></ul>
+                    </td>
+                    <td><a href="school.html">SCHOOL</a></td>
+                    <td><a href="crud.html">CRUD</a></td>
+                    <td><a href="PersonalArea.html"><img src="images/users.png" /></a></td>
+                    <td><a href="#"><img src="images/open.png" /></a></td>
+                </tr>
+            </table>
+        </nav>
+
+        <div class="back-arrow">
+            <a href="crud.html"><img src="images/arrow.png" /></a>
+        </div>
+<div id="container">
+</div>
+        <a class="add-button" onClick="refreshTable()">Refresh</a>
+
+<div id="openModal" class="modalDialog">
+    <div>
+        <a href="#close" title="Закрыть" class="close">X</a>
+        <h2>Add a new arena</h2>
+        <div id="app"></div>
+    </div>
+</div>
+
+
+<div id="openModalUpdate" class="modalDialog">
+    <div>
+        <a href="#close" title="Закрыть" class="close">X</a>
+        <h2>Update this arena</h2>
+        <div id="appUpdate"></div>
+    </div>
+</div>
+    </div>
+
+    <div class="footer">
+        <div class="footer-container">
+            <p class="footer-text">Designed by Катя Непремудрая и Сестрица Алёнушка</p>
+        </div>
+
+    </div>
+
+</div>
+<script type="text/babel">
+    function refreshTable() {
+        ReactDOM.render(
+                <ArenaTable/>,
+            document.getElementById('container')
+
+        );
+    }
+
+    let tableTemplate;
+
+    function makeColumnsId(row) {
+        return <td>{row.id}</td>
+    }
+
+    function makeColumnsName(row) {
+        return <td>{row.name}</td>
+    }
+
+    function makeColumnsAddress(row) {
+        return   <td> {row.address}</td>;
+    }
+
+    function makeColumnsCityName(row) {
+        return   <td> {row.city.name}</td>;
+    }
+
+    function makeColumnsNumberOfRows(row) {
+        return   <td> {row.numberOfRows}</td>;
+    }
+
+    function makeColumnsNumberOfSeats(row) {
+        return   <td> {row.numberOfSeats}</td>;
+    }
+
+    class ArenaTable extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {id: ""};
+
+            this.onChangeId = this.onChangeId.bind(this);
+            this.onUpdateModalCall = this.onUpdateModalCall.bind(this);
+
+        }
+
+        onChangeId(e) {
+            var val = e.target.value;
+           // alert(e.target.value);
+
+            axios.delete('/arenas/delete/'+e.target.value)
+                .then(function (response) {
+                    console.log(response);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    if(error.response.status==405){
+                        alert("Права на это действие есть только у администратора.");
+                    }else {
+                        alert("Ошибка:(");
+                    }
+                });
+
+        }
+
+        onUpdateModalCall(e){
+            console.log(e.target.value);
+            objectIndexForUpdate=e.target.value;
+
+            $.ajax({
+                type:'GET',
+                url: '/arenas/findOne/'+objectIndexForUpdate,
+                async: false,
+                success: function(response) {
+                    console.log(response);
+                    document.getElementById("lName").value=response.name;
+                    $("#lCity option:selected").text(response.city.name);
+                    document.getElementById("lAddress").value=response.address;
+                    document.getElementById("lRows").value=response.numberOfRows;
+                    document.getElementById("lSeats").value=response.numberOfSeats;
+                }
+            });
+
+        }
+
+        render(){
+
+            var t=this.onChangeId;
+            var u=this.onUpdateModalCall;
+
+            $.ajax({
+                type:'GET',
+                url: '/arenas',
+                async: false,
+                success: function(response) {
+
+                    answerV = response;
+                    console.log(response);
+
+                    tableTemplate = answerV.map((row, i) => {
+
+                        var index = row.id;
+                        return <tr key={i}>{makeColumnsId(row)}{makeColumnsName(row)}{makeColumnsAddress(row)}{makeColumnsCityName(row)}{makeColumnsNumberOfRows(row)}{makeColumnsNumberOfSeats(row)}
+                            <td><button className="but" value={index} onClick={t}>Delete</button></td>
+                            <td><a href="#openModalUpdate"><button value={index} onClick={u}>Update</button></a></td>
+                        </tr>
+                    });
+
+
+                }
+            });
+
+            return(
+                    <div class="flex-background">
+                        <div class="flex-block">
+                            <table class="my-table">
+                        <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Name</th>
+                            <th>Address</th>
+                            <th>City</th>
+                            <th>Number of rows</th>
+                            <th>Number of seats</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+
+                        {tableTemplate}
+
+                        </tbody>
+                            </table>
+                            <a href="#openModal" class="add-button">Add</a>
+
+                        </div>
+                    </div>
+            );
+
+        }
+    }
+
+    var answerV;
+
+    ReactDOM.render(
+            <ArenaTable/>,
+        document.getElementById('container')
+
+    );
+
+
+
+    class UserForm extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {name: ""};
+            this.state = {address: ""};
+            this.state = {numberOfRows: ""};
+            this.state = {numberOfSeats: ""};
+            this.state={city:"Рим"};
+            this.state={arenaimage:""};
+
+
+            this.onChangeName = this.onChangeName.bind(this);
+            this.onChangeAddress = this.onChangeAddress.bind(this);
+            this.onChangeNumberOfRows = this.onChangeNumberOfRows.bind(this);
+            this.onChangeNumberOfSeats = this.onChangeNumberOfSeats.bind(this);
+            this.onChangeCity = this.onChangeCity.bind(this);
+            this.onChangeIcon = this.onChangeIcon.bind(this);
+            this.handleSubmit = this.handleSubmit.bind(this);
+        }
+        onChangeName(e) {
+            var val = e.target.value;
+            this.setState({name: val});
+        }
+
+        onChangeAddress(e) {
+            var val = e.target.value;
+            this.setState({address: val});
+        }
+
+        onChangeNumberOfRows(e) {
+            var val = e.target.value;
+            this.setState({numberOfRows: val});
+        }
+
+        onChangeNumberOfSeats(e) {
+            var val = e.target.value;
+            this.setState({numberOfSeats: val});
+        }
+
+        onChangeCity(e) {
+            var val = e.target.value;
+            this.setState({city:val});
+        }
+
+        onChangeIcon(e){
+            var val = e.target.alt;
+            this.setState({arenaimage:val});
+        }
+
+        handleSubmit(e) {
+            e.preventDefault();
+          //  alert("Имя: " + this.state.name+ " address: "+this.state.address+" rows: "+this.state.numberOfRows+" seats: "+this.state.numberOfSeats+" city: " +this.state.city);
+            var nameForPost=this.state.name;
+            var addresForPost=this.state.address;
+            var rows=this.state.numberOfRows;
+            var seats=this.state.numberOfSeats;
+            var imageForPost=this.state.arenaimage;
+            var cityForPost;
+
+
+                axios.get('/cities/name/' + this.state.city)
+                    .then(function (response) {
+                        cityForPost = response.data;
+                        console.log(response);
+
+                        if(nameForPost!=null && addresForPost!=null && rows!=null && seats!=null && cityForPost!=undefined && imageForPost!=null) {
+                        axios.post('/arenas/save', {
+                            name: nameForPost,
+                            address: addresForPost,
+                            numberOfRows: rows,
+                            numberOfSeats: seats,
+                            city: cityForPost,
+                            arenaimage:imageForPost
+                        })
+                            .then(function (response) {
+                                console.log(response);
+                                alert("Арена добавлена")
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                                if(error.response.status==405){
+                                    alert("Права на это действие есть только у администратора.");
+                                }else {
+                                    alert("Ошибка:(");
+                                }                            });
+                    }else {
+                    alert("Некорректные данные")
+                }
+
+                    });
+        }
+
+        render() {
+            return (
+                    <form onSubmit={this.handleSubmit}>
+                        <p>
+                            <label>Name:</label><br />
+                            <input type="text" pattern="^[A-Za-zА-Яа-яЁё\s]+$" value={this.state.name} onChange={this.onChangeName}/>
+                        </p>
+                        <p>
+                            <label>Address:</label><br />
+                            <input type="text" pattern="^[A-Za-zА-Яа-яЁё]+$" value={this.state.address} onChange={this.onChangeAddress}/>
+                        </p>
+                        <p>
+                            <label>Number of rows:</label><br />
+                            <input type="text" pattern="^[ 0-9]+$" value={this.state.numberOfRows} onChange={this.onChangeNumberOfRows}/>
+                        </p>
+                        <p>
+                            <label>Number of seats:</label><br />
+                            <input type="text" pattern="^[ 0-9]+$" value={this.state.numberOfSeats} onChange={this.onChangeNumberOfSeats}/>
+                        </p>
+                        <p>
+                            <label>City:</label><br />
+                            <select selected={this.state.city} onChange={this.onChangeCity}>
+                                {optionTemplate}
+                            </select>
+                        </p>
+                        <p>
+                            <label>Choose icon:</label><br />
+                            <img src="images/1.png" alt="1.png" onClick={this.onChangeIcon} width="50px" height="50px"/>
+                            <img src="images/2.png" alt="2.png" onClick={this.onChangeIcon} width="50px" height="50px"/>
+                            <img src="images/3.png" alt="3.png" onClick={this.onChangeIcon} width="50px" height="50px"/>
+                            <img src="images/4.png" alt="4.png" onClick={this.onChangeIcon} width="50px" height="50px"/>
+
+                        </p>
+                        <input type="submit" value="Add this arena" class="add-this-city-button"/>
+                    </form>
+            );
+        }
+    }
+
+    let optionTemplate;
+    axios.get('/cities/getCityNames')
+        .then(function (response) {
+            console.log(response);
+
+            optionTemplate = response.data.map((item, i) => {
+                return <option key={i}>{item}</option>
+            });
+
+            ReactDOM.render(
+                    <UserForm />,
+                document.getElementById("app")
+            );
+        })
+
+
+    /////////////UPDATE
+    var objectIndexForUpdate=0;
+    class UserFormUpdate extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {name: ""};
+            this.state = {address: ""};
+            this.state = {numberOfRows: ""};
+            this.state = {numberOfSeats: ""};
+            this.state={city:"Рим"};
+            this.state={arenaimage:""};
+
+
+            this.onChangeName = this.onChangeName.bind(this);
+            this.onChangeAddress = this.onChangeAddress.bind(this);
+            this.onChangeNumberOfRows = this.onChangeNumberOfRows.bind(this);
+            this.onChangeNumberOfSeats = this.onChangeNumberOfSeats.bind(this);
+            this.onChangeCity = this.onChangeCity.bind(this);
+            this.onChangeIcon = this.onChangeIcon.bind(this);
+            this.handleSubmit = this.handleSubmit.bind(this);
+        }
+        onChangeName(e) {
+            var val = e.target.value;
+            this.setState({name: val});
+        }
+
+        onChangeAddress(e) {
+            var val = e.target.value;
+            this.setState({address: val});
+        }
+
+        onChangeNumberOfRows(e) {
+            var val = e.target.value;
+            this.setState({numberOfRows: val});
+        }
+
+        onChangeNumberOfSeats(e) {
+            var val = e.target.value;
+            this.setState({numberOfSeats: val});
+        }
+
+        onChangeCity(e) {
+            var val = e.target.value;
+            this.setState({city:val});
+        }
+
+        onChangeIcon(e){
+            var val = e.target.alt;
+            this.setState({arenaimage:val});
+        }
+
+        handleSubmit(e) {
+            e.preventDefault();
+            var nameForUpdate=document.getElementById("lName").value;
+            var addressForUpdate=document.getElementById("lAddress").value;
+            var rowsForUpdate=document.getElementById("lRows").value;
+            var seatsForUpdate=document.getElementById("lSeats").value;
+            var cityForUpdate=$("#lCity option:selected").text();
+
+
+            axios.get('/cities/name/'+cityForUpdate)
+                .then(function (response) {
+                    console.log(response);
+                    var cityObject=response.data;
+
+                    if(nameForUpdate!="" && addressForUpdate!="" && rowsForUpdate!="" && seatsForUpdate!="" && cityForUpdate!="") {
+                        axios.put('/arenas/update/' + objectIndexForUpdate, {
+                            name: nameForUpdate,
+                            address: addressForUpdate,
+                            numberOfRows: rowsForUpdate,
+                            numberOfSeats: seatsForUpdate,
+                            city: cityObject
+                        })
+                            .then(function (response) {
+                                console.log(response);
+                                alert("Арена обновлена")
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                                if(error.response.status==405){
+                                    alert("Права на это действие есть только у администратора.");
+                                }else {
+                                    alert("Ошибка:(");
+                                }                            });
+                    }else {
+                        alert("Некорректные данные")
+                    }
+
+                })
+
+        }
+
+        render() {
+            return (
+                    <form onSubmit={this.handleSubmit}>
+                        <p>
+                            <label>Name:</label><br />
+                            <input id="lName" pattern="^[A-Za-zА-Яа-яЁё\s]+$" type="text" value={this.state.name} onChange={this.onChangeName}/>
+                        </p>
+                        <p>
+                            <label>Address:</label><br />
+                            <input id="lAddress" pattern="^[A-Za-zА-Яа-яЁё]+$" type="text" value={this.state.address} onChange={this.onChangeAddress}/>
+                        </p>
+                        <p>
+                            <label>Number of rows:</label><br />
+                            <input id="lRows" pattern="^[ 0-9]+$"  type="text" value={this.state.numberOfRows} onChange={this.onChangeNumberOfRows}/>
+                        </p>
+                        <p>
+                            <label>Number of seats:</label><br />
+                            <input id="lSeats" pattern="^[ 0-9]+$" type="text" value={this.state.numberOfSeats} onChange={this.onChangeNumberOfSeats}/>
+                        </p>
+                        <p>
+                            <label>City:</label><br />
+                            <select id="lCity" selected={this.state.city} onChange={this.onChangeCity}>
+                                {optionTemplate}
+                            </select>
+                        </p>
+                        <p>
+                            <label>Choose icon:</label><br />
+                            <img src="images/1.png" alt="1.png" onClick={this.onChangeIcon} width="50px" height="50px"/>
+                            <img src="images/2.png" alt="2.png" onClick={this.onChangeIcon} width="50px" height="50px"/>
+                            <img src="images/3.png" alt="3.png" onClick={this.onChangeIcon} width="50px" height="50px"/>
+                            <img src="images/4.png" alt="4.png" onClick={this.onChangeIcon} width="50px" height="50px"/>
+
+                        </p>
+                        <input type="submit" value="Update" class="add-this-city-button" />
+                    </form>
+
+            );
+        }
+    }
+
+    axios.get('/cities/getCityNames')
+        .then(function (response) {
+            console.log(response);
+
+            optionTemplate = response.data.map((item, i) => {
+                return <option key={i}>{item}</option>
+            });
+
+            ReactDOM.render(
+                    <UserFormUpdate />,
+                document.getElementById("appUpdate")
+            );
+        })
+
+
+</script>
+</body>
+</html>

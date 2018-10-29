@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>crudAnimal</title>
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.25.0/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.3/axios.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="stylesheets/styleCrudCity.css" />
+
+</head>
+<body>
+
+
+<div class="wrapper">
+
+    <div id="content">
+        <nav>
+            <a href=""><img src="images/logo.png" /></a>
+            <table id="menu">
+                <tr>
+                    <td>
+                        <ul id="nav">
+                            <li >
+
+                                <a href="#" title="Shop">BUY</a>
+
+                                <ul>
+
+                                    <li><a href="BuyTickets.html">Tickets</a></li>
+
+                                    <li><a href="BuyGladiators.html">Gladiators</a></li>
+                                    <li><a href="BuyWeapons.html">Weapons</a></li>
+                                    <li><a href="BuyArmors.html">Armors</a></li>
+
+                                </ul>
+
+                            </li></ul>
+                    </td>
+                    <td><a href="school.html">SCHOOL</a></td>
+                    <td><a href="crud.html">CRUD</a></td>
+                    <td><a href="PersonalArea.html"><img src="images/users.png" /></a></td>
+                    <td><a href="#"><img src="images/open.png" /></a></td>
+                </tr>
+            </table>
+        </nav>
+
+        <div class="back-arrow">
+            <a href="crud.html"><img src="images/arrow.png" /></a>
+        </div>
+
+<div id="container">
+</div>
+        <a class="add-button" onClick="refreshTable()">Refresh</a>
+
+<div id="openModal" class="modalDialog">
+    <div>
+        <a href="#close" title="Закрыть" class="close">X</a>
+        <h2>Add a new animal</h2>
+        <div id="app"></div>
+    </div>
+</div>
+
+
+<div id="openModalUpdate" class="modalDialog">
+    <div>
+        <a href="#close" title="Закрыть" class="close">X</a>
+        <h2>Update this master</h2>
+        <div id="appUpdate"></div>
+    </div>
+</div>
+
+    </div>
+
+    <div class="footer">
+        <div class="footer-container">
+            <p class="footer-text">Designed by Катя Непремудрая и Сестрица Алёнушка</p>
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/babel">
+
+    function refreshTable() {
+        ReactDOM.render(
+                <AnimalTable/>,
+            document.getElementById('container')
+        );
+    }
+
+    let tableTemplate;
+
+    function makeColumnsId(row) {
+        return <td>{row.id}</td>
+    }
+
+    function makeColumnsName(row) {
+        return <td>{row.name}</td>
+    }
+
+    function makeColumnsWeapons(row) {
+        var weapons=[];
+        for(var i=0;i<row.weaponEntities.length;i++){
+            weapons+=row.weaponEntities[i].name+ " ";
+        }
+        return <td>{weapons}</td>
+    }
+
+    class AnimalTable extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {id: ""};
+
+            this.onChangeId = this.onChangeId.bind(this);
+            this.onUpdateModalCall = this.onUpdateModalCall.bind(this);
+
+        }
+
+        onChangeId(e) {
+            var val = e.target.value;
+           // alert(e.target.value);
+
+            axios.delete('/animals/delete/'+e.target.value)
+                .then(function (response) {
+                    console.log(response);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    if(error.response.status==405){
+                        alert("Права на это действие есть только у администратора.");
+                    }else {
+                        alert("Ошибка:(");
+                    }
+                });
+
+        }
+
+        onUpdateModalCall(e){
+            console.log(e.target.value);
+            objectIndexForUpdate=e.target.value;
+
+            $.ajax({
+                type:'GET',
+                url: '/animals/findOne/'+objectIndexForUpdate,
+                async: false,
+                success: function(response) {
+                    console.log(response);
+                    document.getElementById("lName").value=response.name;
+                }
+            });
+
+        }
+
+
+        render(){
+            var t=this.onChangeId;
+            var u=this.onUpdateModalCall;
+
+            $.ajax({
+                type:'GET',
+                url: '/animals',
+                async: false,
+                success: function(response) {
+
+                    answerV = response;
+                    console.log(response);
+
+                    tableTemplate = answerV.map((row, i) => {
+
+                        var index = row.id;
+                        return <tr key={i}>{makeColumnsId(row)}{makeColumnsName(row)}{makeColumnsWeapons(row)}
+                            <td><button className="but" value={index} onClick={t}>Delete</button></td>
+                            <td><a href="#openModalUpdate"><button value={index} onClick={u}>Update</button></a></td>
+                        </tr>
+                    });
+
+
+                }
+            });
+
+            return(
+                    <div class="flex-background">
+                        <div class="flex-block">
+                            <table class="my-table">
+                        <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Name</th>
+                            <th>Weapons</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+
+                        {tableTemplate}
+
+                        </tbody>
+                            </table>
+                            <a href="#openModal" class="add-button">Add</a>
+
+                        </div>
+                    </div>
+            );
+
+        }
+    }
+    var answerV;
+
+    ReactDOM.render(
+            <AnimalTable/>,
+        document.getElementById('container')
+    );
+
+    var array=[];
+
+    class UserForm extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {name: ""};
+            this.state={weapon:""};
+
+            this.onChangeName = this.onChangeName.bind(this);
+            this.onChangeWeapon = this.onChangeWeapon.bind(this);
+            this.handleSubmit = this.handleSubmit.bind(this);
+        }
+        onChangeName(e) {
+            var val = e.target.value;
+            this.setState({name: val});
+        }
+
+        onChangeWeapon(e) {
+            var val = e.target.value;
+            this.setState({weapon:val});
+            array.push(val);
+        }
+
+        handleSubmit(e) {
+            e.preventDefault();
+            console.log(array);
+            var nameForPost=this.state.name;
+            var arL=array.length;
+          var set=[];
+           for(var i=0;i<array.length;i++){
+
+               $.ajax({
+                   type:'GET',
+                   url: '/weapons/findWeaponByName/'+array[i],
+                   async: false,
+                   success: function(response) {
+
+                       console.log(response);
+                       set.push(response);
+                   }
+               });
+
+
+           }
+            console.log(nameForPost);
+            console.log(set);
+            var objectJson={
+                name: nameForPost,
+                weaponEntities: set
+            };
+
+            if(nameForPost!=undefined && set.length!=0) {
+                $.ajax({
+                    type: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    url: '/animals/save',
+                    data: JSON.stringify(objectJson),
+                    async: false,
+                    success: function (response) {
+                        console.log(response);
+                        alert("Новое животное добавлено")
+                    },
+                    error: function (response) {
+                        console.log(response);
+                        if(error.response.status==405){
+                            alert("Права на это действие есть только у администратора.");
+                        }else {
+                            alert("Ошибка:(");
+                        }                    }
+                });
+            }else {
+                alert("Некорректные данные")
+            }
+
+           array=[];
+        }
+
+        render() {
+            return (
+                    <form onSubmit={this.handleSubmit}>
+                        <p>
+                            <label>Name:</label><br />
+                            <input type="text" pattern="^[A-Za-zА-Яа-яЁё]+$" value={this.state.name} onChange={this.onChangeName}/>
+                        </p>
+                        <p>
+                            <label>Weapon:</label><br />
+                            <select multiple onClick={this.onChangeWeapon}>
+                                {optionTemplate}
+                            </select>
+                        </p>
+
+                        <input type="submit" value="Add this animal" class="add-this-city-button"/>
+                    </form>
+            );
+        }
+    }
+
+
+    let optionTemplate;
+    axios.get('/weapons/findWeaponNames')
+        .then(function (response) {
+            console.log(response);
+
+            optionTemplate = response.data.map((item, i) => {
+                return <option key={i}>{item}</option>
+            });
+
+            ReactDOM.render(
+                    <UserForm />,
+                document.getElementById("app")
+            );
+        })
+
+
+    /////////////UPDATE
+    var objectIndexForUpdate=0;
+    class UserFormUpdate extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {name: ""};
+            this.state={weapon:""};
+
+            this.onChangeName = this.onChangeName.bind(this);
+            this.onChangeWeapon = this.onChangeWeapon.bind(this);
+            this.handleSubmit = this.handleSubmit.bind(this);
+        }
+        onChangeName(e) {
+            var val = e.target.value;
+            this.setState({name: val});
+        }
+
+        onChangeWeapon(e) {
+            var val = e.target.value;
+            this.setState({weapon:val});
+            array.push(val);
+        }
+
+        handleSubmit(e) {
+            e.preventDefault();
+
+            var nameForUpdate=document.getElementById("lName").value;
+            var set=[];
+            for(var i=0;i<array.length;i++){
+
+                $.ajax({
+                    type:'GET',
+                    url: '/weapons/findWeaponByName/'+array[i],
+                    async: false,
+                    success: function(response) {
+
+                        console.log(response);
+                        set.push(response);
+
+
+                    }
+                });
+
+            }
+            console.log(nameForUpdate);
+            console.log(set);
+            var objectJson={
+                name: nameForUpdate,
+                weaponEntities: set
+            };
+
+            if(nameForUpdate!="" && set.length!=0){
+            $.ajax({
+                type: 'PUT',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                url: '/animals/update/'+objectIndexForUpdate,
+                data: JSON.stringify(objectJson),
+                async: false,
+                success: function(response){
+                    console.log(response);
+                    alert("Животное обновлено");
+                },
+                error:function (response) {
+                    console.log(response);
+                    if(error.response.status==405){
+                        alert("Права на это действие есть только у администратора.");
+                    }else {
+                        alert("Ошибка:(");
+                    }                }
+            });
+            }else {
+                alert("Некорректные данные")
+            }
+
+            array=[];
+
+        }
+
+        render() {
+            return (
+                    <form onSubmit={this.handleSubmit}>
+                        <p>
+                            <label>Name:</label><br />
+                            <input id="lName"  pattern="^[A-Za-zА-Яа-яЁё]+$" type="text" value={this.state.name} onChange={this.onChangeName}/>
+                        </p>
+                        <p>
+                            <label>Weapon:</label><br />
+                            <select id="lWeapon" multiple onClick={this.onChangeWeapon}>
+                                {optionTemplate}
+                            </select>
+                        </p>
+
+                        <input type="submit" value="Update" class="add-this-city-button" />
+                    </form>
+
+            );
+        }
+    }
+
+    axios.get('/weapons/findWeaponNames')
+        .then(function (response) {
+            console.log(response);
+
+            optionTemplate = response.data.map((item, i) => {
+                return <option key={i}>{item}</option>
+            });
+
+            ReactDOM.render(
+                    <UserFormUpdate />,
+                document.getElementById("appUpdate")
+            );
+        })
+
+</script>
+</body>
+</html>

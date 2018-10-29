@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>crudFight</title>
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.25.0/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.3/axios.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="stylesheets/styleCrudCity.css" />
+
+</head>
+<body>
+
+
+<div class="wrapper">
+
+    <div id="content">
+        <nav>
+            <a href=""><img src="images/logo.png" /></a>
+            <table id="menu">
+                <tr>
+                    <td>
+                        <ul id="nav">
+                            <li >
+
+                                <a href="#" title="Shop">BUY</a>
+
+                                <ul>
+
+                                    <li><a href="BuyTickets.html">Tickets</a></li>
+
+                                    <li><a href="BuyGladiators.html">Gladiators</a></li>
+                                    <li><a href="BuyWeapons.html">Weapons</a></li>
+                                    <li><a href="BuyArmors.html">Armors</a></li>
+
+                                </ul>
+
+                            </li></ul>
+                    </td>
+                    <td><a href="school.html">SCHOOL</a></td>
+                    <td><a href="crud.html">CRUD</a></td>
+                    <td><a href="PersonalArea.html"><img src="images/users.png" /></a></td>
+                    <td><a href="#"><img src="images/open.png" /></a></td>
+                </tr>
+            </table>
+        </nav>
+
+        <div class="back-arrow">
+            <a href="crud.html"><img src="images/arrow.png" /></a>
+        </div>
+
+<div id="container">
+</div>
+
+        <a class="add-button" onClick="refreshTable()">Refresh</a>
+
+<div id="openModal" class="modalDialog">
+    <div>
+        <a href="#close" title="Закрыть" class="close">X</a>
+        <h2>Add a new fight</h2>
+        <div id="app"></div>
+    </div>
+</div>
+
+
+<div id="openModalUpdate" class="modalDialog">
+    <div>
+        <a href="#close" title="Закрыть" class="close">X</a>
+        <h2>Update this master</h2>
+        <div id="appUpdate"></div>
+    </div>
+</div>
+
+    </div>
+
+    <div class="footer">
+        <div class="footer-container">
+            <p class="footer-text">Designed by Катя Непремудрая и Сестрица Алёнушка</p>
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/babel">
+    function refreshTable() {
+        ReactDOM.render(
+                <FightTable/>,
+            document.getElementById('container')
+        );
+    }
+
+    let tableTemplate;
+
+    function makeColumnsNumberFight(row) {
+        return <td>{row.id}</td>
+    }
+
+    function makeColumnsArenaName(row) {
+        return <td>{row.arena.name}</td>
+    }
+
+    function makeColumnsPrize(row) {
+        return   <td> {row.prize}</td>;
+    }
+
+    function makeColumnsWinner(row) {
+        return   <td> {row.winner}</td>;
+    }
+
+    class FightTable extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {id: ""};
+
+            this.onChangeId = this.onChangeId.bind(this);
+            this.onUpdateModalCall = this.onUpdateModalCall.bind(this);
+
+        }
+
+        onChangeId(e) {
+            var val = e.target.value;
+          //  alert(e.target.value);
+
+            axios.delete('/fights/delete/'+e.target.value)
+                .then(function (response) {
+                    console.log(response);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    if(error.response.status==405){
+                        alert("Права на это действие есть только у администратора.");
+                    }else {
+                        alert("Ошибка:(");
+                    }
+                });
+
+        }
+
+        onUpdateModalCall(e){
+            console.log(e.target.value);
+            objectIndexForUpdate=e.target.value;
+
+            $.ajax({
+                type:'GET',
+                url: '/fights/findOne/'+objectIndexForUpdate,
+                async: false,
+                success: function(response) {
+                    console.log(response);
+                    /////////////////////////////////
+                    document.getElementById("lWinner").value=response.winner;
+                    document.getElementById("lPrize").value=response.prize;
+                    $("#lArena option:selected").text(response.arena.name);
+
+
+                }
+            });
+
+        }
+
+        render(){
+
+            var t=this.onChangeId;
+            var u=this.onUpdateModalCall;
+
+            $.ajax({
+                type:'GET',
+                url: '/fights',
+                async: false,
+                success: function(response) {
+
+                    answerV = response;
+                    console.log(response);
+
+                    tableTemplate = answerV.map((row, i) => {
+
+                        var index = row.id;
+                        return <tr key={i}>{makeColumnsNumberFight(row)}{makeColumnsArenaName(row)}{makeColumnsPrize(row)}{makeColumnsWinner(row)}
+                            <td><button className="but" value={index} onClick={t}>Delete</button></td>
+                            <td><a href="#openModalUpdate"><button value={index} onClick={u}>Update</button></a></td>
+                        </tr>
+                    });
+
+                }
+            });
+
+            return(
+                    <div class="flex-background">
+                        <div class="flex-block">
+                            <table class="my-table">
+                                <thead>
+                        <tr>
+                            <th>Number of fight</th>
+                            <th>Arena</th>
+                            <th>Prize</th>
+                            <th>Winner</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+
+                        {tableTemplate}
+
+                        </tbody>
+                            </table>
+                            <a href="#openModal" class="add-button">Add</a>
+
+                        </div>
+                    </div>
+            );
+
+        }
+    }
+    var answerV;
+
+    ReactDOM.render(
+            <FightTable/>,
+        document.getElementById('container')
+    );
+
+
+    var arrayAnimals=[];
+    var arrayGladiators=[];
+
+    class UserForm extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {prize: ""};
+            this.state = {arena: ""};
+            this.state = {gladiator: ""};
+            this.state = {animal: ""};
+            this.state={winner:""};
+
+            this.onChangePrize = this.onChangePrize.bind(this);
+            this.onChangeArena = this.onChangeArena.bind(this);
+            this.onChangeGladiator = this.onChangeGladiator.bind(this);
+            this.onChangeAnimal = this.onChangeAnimal.bind(this);
+            this.onChangeWinner = this.onChangeWinner.bind(this);
+            this.handleSubmit = this.handleSubmit.bind(this);
+        }
+        onChangePrize(e) {
+            var val = e.target.value;
+            this.setState({prize: val});
+        }
+
+        onChangeArena(e) {
+            var val = e.target.value;
+            this.setState({arena: val});
+        }
+
+        onChangeGladiator(e) {
+            var val = e.target.value;
+            this.setState({gladiator: val});
+            arrayGladiators.push(val);
+        }
+
+        onChangeAnimal(e) {
+            var val = e.target.value;
+            this.setState({animal: val});
+            arrayAnimals.push(val);
+        }
+
+        onChangeWinner(e) {
+            var val = e.target.value;
+            this.setState({winner:val});
+        }
+
+        handleSubmit(e) {
+            e.preventDefault();
+          //  alert("Имя: " + this.state.name+ " address: "+this.state.address+" rows: "+this.state.numberOfRows+" seats: "+this.state.numberOfSeats+" city: " +this.state.city);
+            var prizeForPost=this.state.prize;
+            var winnerForPost=this.state.winner;
+            var arenaForPost="";
+
+            console.log(arrayAnimals);
+            console.log(arrayGladiators);
+            var animalsLength=arrayAnimals.length;
+            var gladiatorLength=arrayGladiators.length;
+            var animalsSet=[];
+            var gladiatorsSet=[];
+
+            $.ajax({
+                type:'GET',
+                url: '/arenas/findArenaByName/'+this.state.arena,
+                async: false,
+                success: function(response) {
+
+                    console.log(response);
+                    arenaForPost=response;
+                }
+            });
+
+
+            for(var i=0;i<arrayAnimals.length;i++){
+
+                $.ajax({
+                    type:'GET',
+                    url: '/animals/findAnimalByName/'+arrayAnimals[i],
+                    async: false,
+                    success: function(response) {
+
+                        console.log(response);
+                        animalsSet.push(response);
+
+                    }
+                });
+
+            }
+
+            for(var i=0;i<arrayGladiators.length;i++){
+console.log(arrayGladiators[i]);
+                $.ajax({
+                    type:'GET',
+                    url: '/gladiators/name/'+arrayGladiators[i],
+                    async: false,
+                    success: function(response) {
+
+                        console.log(response);
+                        gladiatorsSet.push(response);
+
+                    }
+                });
+
+            }
+
+            console.log(prizeForPost);
+            console.log(animalsSet);
+            console.log(gladiatorsSet);
+            console.log(arenaForPost);
+            console.log(winnerForPost);
+            var objectJson={
+                prize: prizeForPost,
+                arena:arenaForPost,
+                winner:winnerForPost,
+                animalEntities:animalsSet,
+                gladiatorEntities: gladiatorsSet
+            };
+
+
+            if(prizeForPost!=null && arenaForPost!=null && arenaForPost!="" && (animalsSet.length!=0 || gladiatorsSet.length!=0)) {
+                $.ajax({
+                    type: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    url: '/fights/save',
+                    data: JSON.stringify(objectJson),
+                    async: false,
+                    success: function (response) {
+                        console.log(response);
+                        alert("Бой добавлен")
+                    },
+                    error: function (response) {
+                        console.log(response);
+                        if(error.response.status==405){
+                            alert("Права на это действие есть только у администратора.");
+                        }else {
+                            alert("Ошибка:(");
+                        }                    }
+                });
+            }else {
+                alert("Некорректные данные")
+            }
+
+            arrayGladiators=[];
+            arrayAnimals=[];
+
+        }
+
+        render() {
+            return (
+                    <form onSubmit={this.handleSubmit}>
+                        <p>
+                            <label>Prize:</label><br />
+                            <input type="text" pattern="^[ 0-9]+$" value={this.state.prize} onChange={this.onChangePrize}/>
+                        </p>
+                        <p>
+                            <label>Arena:</label><br />
+                            <select selected={this.state.arena} onChange={this.onChangeArena}>
+                                {arenasTemplate}
+                            </select>
+                        </p>
+                        <p>
+                            <label>Gladiator:</label><br />
+                            <select multiple  onClick={this.onChangeGladiator}>
+                                {gladiatorsTemplate}
+                            </select>
+                        </p>
+                        <p>
+                            <label>Animal:</label><br />
+                            <select multiple  onClick={this.onChangeAnimal}>
+                                {animalsTemplate}
+                            </select>
+                        </p>
+                        <p>
+                            <label>Winner:</label><br />
+                            <input type="text"  pattern="^[A-Za-zА-Яа-яЁё]+$" value={this.state.winner} onChange={this.onChangeWinner}/>
+                        </p>
+                        <input type="submit" value="Add this fight" class="add-this-city-button" />
+                    </form>
+            );
+        }
+    }
+
+
+
+    let arenasTemplate;
+    let animalsTemplate;
+    let gladiatorsTemplate;
+
+            axios.get('/arenas/findArenaNames')
+                .then(function (response) {
+                    console.log(response);
+
+                    arenasTemplate = response.data.map((item, i) => {
+                        return <option key={i}>{item}</option>
+                    });
+
+                    axios.get('/animals/findAnimalNames')
+                        .then(function (response) {
+                            console.log(response);
+
+                            animalsTemplate = response.data.map((item, i) => {
+                                return <option key={i}>{item}</option>
+                            });
+
+
+                            axios.get('/gladiators/findGladiatorNames')
+                                .then(function (response) {
+                                    console.log(response);
+
+                                    gladiatorsTemplate = response.data.map((item, i) => {
+                                        return <option key={i}>{item}</option>
+                                    });
+
+                                    ReactDOM.render(
+                                            <UserForm />,
+                                        document.getElementById("app")
+                                    );
+
+
+                                })
+
+                        })
+
+                })
+
+
+    /////////////UPDATE
+    var objectIndexForUpdate=0;
+    class UserFormUpdate extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {prize: ""};
+            this.state = {arena: ""};
+            this.state = {gladiator: ""};
+            this.state = {animal: ""};
+            this.state={winner:""};
+
+            this.onChangePrize = this.onChangePrize.bind(this);
+            this.onChangeArena = this.onChangeArena.bind(this);
+            this.onChangeGladiator = this.onChangeGladiator.bind(this);
+            this.onChangeAnimal = this.onChangeAnimal.bind(this);
+            this.onChangeWinner = this.onChangeWinner.bind(this);
+            this.handleSubmit = this.handleSubmit.bind(this);
+        }
+        onChangePrize(e) {
+            var val = e.target.value;
+            this.setState({prize: val});
+        }
+
+        onChangeArena(e) {
+            var val = e.target.value;
+            this.setState({arena: val});
+        }
+
+        onChangeGladiator(e) {
+            var val = e.target.value;
+            this.setState({gladiator: val});
+            arrayGladiators.push(val);
+        }
+
+        onChangeAnimal(e) {
+            var val = e.target.value;
+            this.setState({animal: val});
+            arrayAnimals.push(val);
+        }
+
+        onChangeWinner(e) {
+            var val = e.target.value;
+            this.setState({winner:val});
+        }
+
+        handleSubmit(e) {
+            e.preventDefault();
+
+          var winnerForUpdate=  document.getElementById("lWinner").value;
+            var prizeForUpdate=  document.getElementById("lPrize").value;
+            var arenaForUpdate= $("#lArena option:selected").text();
+            var animalsSet=[];
+            var gladiatorsSet=[];
+            var arenaForPut;
+
+            $.ajax({
+                type:'GET',
+                url: '/arenas/findArenaByName/'+arenaForUpdate,
+                async: false,
+                success: function(response) {
+
+                    console.log(response);
+                    arenaForPut=response;
+                }
+            });
+
+
+            for(var i=0;i<arrayAnimals.length;i++){
+
+                $.ajax({
+                    type:'GET',
+                    url: '/animals/findAnimalByName/'+arrayAnimals[i],
+                    async: false,
+                    success: function(response) {
+
+                        console.log(response);
+                        animalsSet.push(response);
+
+                    }
+                });
+
+            }
+
+            for(var i=0;i<arrayGladiators.length;i++){
+                console.log(arrayGladiators[i]);
+                $.ajax({
+                    type:'GET',
+                    url: '/gladiators/name/'+arrayGladiators[i],
+                    async: false,
+                    success: function(response) {
+
+                        console.log(response);
+                        gladiatorsSet.push(response);
+
+                    }
+                });
+
+            }
+
+            var objectJson={
+                prize: prizeForUpdate,
+                arena:arenaForPut,
+                winner:winnerForUpdate,
+                animalEntities:animalsSet,
+                gladiatorEntities: gladiatorsSet
+            };
+
+            if(prizeForUpdate!="" && arenaForPut!="" && arenaForPut!=null && (animalsSet.length!=0 || gladiatorsSet.length!=0)) {
+                $.ajax({
+                    type: 'PUT',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    url: '/fights/update/' + objectIndexForUpdate,
+                    data: JSON.stringify(objectJson),
+                    async: false,
+                    success: function (response) {
+                        console.log(response);
+                        alert("Бой обновлён")
+                    },
+                    error: function (response) {
+                        console.log(response);
+                        if(error.response.status==405){
+                            alert("Права на это действие есть только у администратора.");
+                        }else {
+                            alert("Ошибка:(");
+                        }                    }
+                });
+            }else {
+                alert("Некорректные данные")
+            }
+
+            arrayAnimals=[];
+            arrayGladiators=[];
+
+
+        }
+
+        render() {
+            return (
+                    <form onSubmit={this.handleSubmit}>
+                        <p>
+                            <label>Prize:</label><br />
+                            <input id="lPrize" pattern="^[ 0-9]+$" type="text" value={this.state.prize} onChange={this.onChangePrize}/>
+                        </p>
+                        <p>
+                            <label>Arena:</label><br />
+                            <select id="lArena" selected={this.state.arena} onChange={this.onChangeArena}>
+                                {arenasTemplate}
+                            </select>
+                        </p>
+                        <p>
+                            <label>Gladiator:</label><br />
+                            <select multiple  onClick={this.onChangeGladiator}>
+                                {gladiatorsTemplate}
+                            </select>
+                        </p>
+                        <p>
+                            <label>Animal:</label><br />
+                            <select multiple  onClick={this.onChangeAnimal}>
+                                {animalsTemplate}
+                            </select>
+                        </p>
+                        <p>
+                            <label>Winner:</label><br />
+                            <input id="lWinner" type="text" value={this.state.winner} onChange={this.onChangeWinner}/>
+                        </p>
+                        <input type="submit" pattern="^[A-Za-zА-Яа-яЁё]+$" value="Update" class="add-this-city-button"/>
+                    </form>
+
+            );
+        }
+    }
+
+    axios.get('/arenas/findArenaNames')
+        .then(function (response) {
+            console.log(response);
+
+            arenasTemplate = response.data.map((item, i) => {
+                return <option key={i}>{item}</option>
+            });
+
+            axios.get('/animals/findAnimalNames')
+                .then(function (response) {
+                    console.log(response);
+
+                    animalsTemplate = response.data.map((item, i) => {
+                        return <option key={i}>{item}</option>
+                    });
+
+
+                    axios.get('/gladiators/findGladiatorNames')
+                        .then(function (response) {
+                            console.log(response);
+
+                            gladiatorsTemplate = response.data.map((item, i) => {
+                                return <option key={i}>{item}</option>
+                            });
+
+                            ReactDOM.render(
+                                    <UserFormUpdate />,
+                                document.getElementById("appUpdate")
+                            );
+
+
+                        })
+
+                })
+
+        })
+
+
+</script>
+</body>
+</html>

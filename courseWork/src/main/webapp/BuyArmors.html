@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BuyArmors</title>
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.25.0/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.3/axios.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.min.js"></script>
+
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/styleBuy.css" />
+
+
+    <script>
+        $(document).ready(function(){
+            $('.slider').bxSlider({
+                slideWidth:500,
+                moveSlides:2,
+                minSlides: 2,
+                maxSlides: 3
+            });
+        });
+    </script>
+</head>
+<body>
+
+<nav>
+    <img src="images/logo.png" />
+    <table id="menu">
+        <tr>
+            <td>
+                <ul id="nav">
+                    <li >
+
+                        <a href="#" title="Shop">BUY</a>
+
+                        <ul>
+
+                            <li><a href="BuyTickets.html">Tickets</a></li>
+
+                            <li><a href="BuyGladiators.html">Gladiators</a></li>
+                            <li><a href="BuyWeapons.html">Weapons</a></li>
+                            <li><a href="BuyArmors.html">Armors</a></li>
+
+                        </ul>
+
+                    </li></ul>
+            </td>
+            <td><a href="school.html">SCHOOL</a></td>
+            <td><a href="crud.html">CRUD</a></td>
+            <td><a href="PersonalArea.html"><img src="images/users.png" /></a></td>
+            <td><a href="#"><img src="images/open.png" /></a></td>
+        </tr>
+    </table>
+</nav>
+
+
+<div id="content" >
+
+</div>
+
+
+<div id="openModalArmor" class="modalDialog">
+    <div>
+        <a href="#close" title="Закрыть" class="close">X</a>
+        <h2>Information</h2>
+        <div id="appUpdate"></div>
+    </div>
+</div>
+
+<div class="footer">
+    <div class="footer-container">
+        <p class="footer-text">Designed by Катя Непремудрая и Сестрица Алёнушка</p>
+    </div>
+
+</div>
+
+
+
+<script type="text/babel">
+
+    let tableTemplate;
+    class ImagesArmors extends React.Component{
+        constructor(props) {
+            super(props);
+
+            this.onChangeId = this.onChangeId.bind(this);
+        }
+
+        onChangeId(e) {
+            var val = e.target.alt;
+            objectIndexForUpdate=e.target.alt;
+
+            $.ajax({
+                type:'GET',
+                url: '/armors/findOne/'+objectIndexForUpdate,
+                async: false,
+                success: function(response) {
+                    console.log(response);
+                    objectForUpdate=response;
+                    document.getElementById("lName").value=response.name;
+                    document.getElementById("lDefense").value=response.defense;
+                    document.getElementById("lCost").value=response.cost;
+
+                    document.getElementById("lShield").checked=response.shield;
+
+                }
+            });
+
+        }
+
+        render(){
+            var t=this.onChangeId;
+            $.ajax({
+                type:'GET',
+                url: '/armors',
+                async: false,
+                success: function(response) {
+
+                    answerV = response;
+                    console.log(response);
+
+                    tableTemplate = answerV.map((row, i) => {
+
+                        var index = row.id;
+                        var imageName=row.armorimage;
+                        return <div><a href="#openModalArmor"><img key={i} alt={index} onClick={t}  src={"images/"+imageName} width="300" height="300"/></a>
+                        </div>
+                    });
+
+                }
+            });
+
+            return(
+                    <div id="slider" class="slider">
+                        {tableTemplate}
+                    </div>
+            );
+
+        }
+    }
+
+    var answerV;
+
+
+    ReactDOM.render(
+            <ImagesArmors/>,
+        document.getElementById('content')
+
+    );
+
+
+    /////////////UPDATE
+    var objectForUpdate;
+    var objectIndexForUpdate=0;
+    class UserFormUpdate extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {name: ""};
+            this.state={shield:""};
+            this.state={defense:""};
+            this.state={cost:""};
+
+            this.onChangeName = this.onChangeName.bind(this);
+            this.onChangeShield = this.onChangeShield.bind(this);
+            this.onChangeDefense = this.onChangeDefense.bind(this);
+            this.onChangeCost = this.onChangeCost.bind(this);
+            this.handleSubmit = this.handleSubmit.bind(this);
+        }
+        onChangeName(e) {
+            var val = e.target.value;
+            this.setState({name: val});
+        }
+
+        onChangeShield(e) {
+            var val = e.target.checked;
+
+            this.setState({shield: val});
+        }
+
+        onChangeDefense(e) {
+            var val = e.target.value;
+            this.setState({defense: val});
+        }
+
+        onChangeCost(e) {
+            var val = e.target.value;
+            this.setState({cost:val});
+        }
+
+        handleSubmit(e) {
+            e.preventDefault();
+           // var nameForUpdate=document.getElementById("lName").value;
+            //var defenseForUpdate=document.getElementById("lDefense").value;
+            //var shieldForUpdate=document.getElementById("lShield").checked;
+            //var costForUpdate=document.getElementById("lCost").value;
+
+            axios.get('/gladiators/buyArmor/'+objectIndexForUpdate)
+                .then(function (response) {
+                    console.log(response);
+                    alert("Доспехи куплены");
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    alert("Ошибка:(");
+
+                });
+        }
+
+        render() {
+            return (
+                    <form onSubmit={this.handleSubmit}>
+                        <p>
+                            <label>Name:</label><br />
+                            <input id="lName" type="text" value={this.state.name} onChange={this.onChangeName} disabled/>
+                        </p>
+                        <p>
+                            <label>Shield:</label><br />
+                            <input id="lShield" type="checkbox" checked={this.state.shield} onChange={this.onChangeShield} disabled/>
+                        </p>
+                        <p>
+                            <label>Defense:</label><br />
+                            <input id="lDefense" type="text" value={this.state.defense} onChange={this.onChangeDefense} disabled/>
+                        </p>
+                        <p>
+                            <label>Cost:</label><br />
+                            <input id="lCost" type="text" value={this.state.cost} onChange={this.onChangeCost} disabled/>
+                        </p>
+
+                        <input type="submit" value="Buy" class="add-this-city-button"/>
+                    </form>
+
+            );
+        }
+    }
+
+    ReactDOM.render(
+            <UserFormUpdate />,
+        document.getElementById("appUpdate")
+    );
+
+
+</script>
+
+
+</body>
+</html>

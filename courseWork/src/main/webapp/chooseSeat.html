@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="stylesheets/styleChooseSeat.css" />
+    <title>Gladiators</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.3/axios.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.25.0/babel.min.js"></script>
+
+
+</head>
+
+<body>
+
+    <div class="wrapper">
+
+        <div class="content">
+            <nav>
+                <a href="home.html"><img src="images/logo.png" /></a>
+                <table id="menu">
+                    <tr>
+                        <td>
+                            <ul id="nav">
+                                <li >
+
+                                    <a href="#" title="Shop">BUY</a>
+
+                                    <ul>
+
+                                        <li><a href="BuyTickets.html">Tickets</a></li>
+
+                                        <li><a href="BuyGladiators.html">Gladiators</a></li>
+                                        <li><a href="BuyWeapons.html">Weapons</a></li>
+                                        <li><a href="BuyArmors.html">Armors</a></li>
+
+                                    </ul>
+
+                                </li></ul>
+                        </td>
+                        <td><a href="school.html">SCHOOL</a></td>
+                        <td><a href="crud.html">CRUD</a></td>
+                        <td><a href="PersonalArea.html"><img src="images/users.png" /></a></td>
+                        <td><a href="#"><img src="images/open.png" /></a></td>
+                    </tr>
+                </table>
+            </nav>
+
+            <div id="forReact" class="flex-box margin-top">
+
+
+            </div>
+
+
+            <div id="openModal" class="modalDialog">
+                <div>
+                    <a href="#close" title="Закрыть" class="close">X</a>
+                    <h2>Ticket</h2>
+                    <div id="app"></div>
+                </div>
+            </div>
+
+
+            <div class="flex-box">
+                <div class="flex-block">
+                    <a href=""><img src="images/blue-round.png" alt=""></a>
+                </div>
+                <div class="flex-block">
+                    <a href=""><img src="images/blue-round.png" alt=""></a>
+                </div>
+                <div class="flex-block">
+                    <a href=""><img class="invisible" src="images/blue-round.png" alt=""></a>
+                </div>
+                <div class="flex-block">
+                    <a href=""><img src="images/blue-round.png" alt=""></a>
+                </div>
+                <div class="flex-block">
+                    <a href=""><img src="images/blue-round.png" alt=""></a>
+                </div>
+                <div class="flex-block">
+                    <a href=""><img src="images/blue-round.png" alt=""></a>
+                </div>
+                <div class="flex-block">
+                    <a href=""><img src="images/blue-round.png" alt=""></a>
+                </div>
+                <div class="flex-block">
+                    <a href=""><img src="images/blue-round.png" alt=""></a>
+                </div>
+                <div class="flex-block">
+                    <a href=""><img class="invisible" src="images/blue-round.png" alt=""></a>
+                </div>
+                <div class="flex-block">
+                    <a href=""><img src="images/blue-round.png" alt=""></a>
+                </div>
+            </div>
+            <div class="flex-box">
+                <div class="flex-block">
+                    <a href=""><img src="images/blue-round.png" alt=""></a>
+                </div>
+                <div class="flex-block">
+                    <a href=""><img src="images/blue-round.png" alt=""></a>
+                </div>
+                <div class="flex-block">
+                    <a href=""><img src="images/blue-round.png" alt=""></a>
+                </div>
+                <div class="flex-block">
+                    <a href=""><img src="images/blue-round.png" alt=""></a>
+                </div>
+                <div class="flex-block">
+                    <a href=""><img class="invisible" src="images/blue-round.png" alt=""></a>
+                </div>
+                <div class="flex-block">
+                    <a href=""><img src="images/blue-round.png" alt=""></a>
+                </div>
+                <div class="flex-block">
+                    <a href=""><img src="images/blue-round.png" alt=""></a>
+                </div>
+                <div class="flex-block">
+                    <a href=""><img src="images/blue-round.png" alt=""></a>
+                </div>
+                <div class="flex-block">
+                    <a href=""><img src="images/blue-round.png" alt=""></a>
+                </div>
+                <div class="flex-block">
+                    <a href=""><img src="images/blue-round.png" alt=""></a>
+                </div>
+            </div>
+            <div class="flex-box">
+                <div class="flex-block">
+                    <a href=""><img src="images/blue-round.png" alt=""></a>
+                </div>
+                <div class="flex-block">
+                    <a href=""><img src="images/blue-round.png" alt=""></a>
+                </div>
+                <div class="flex-block">
+                    <a href=""><img src="images/blue-round.png" alt=""></a>
+                </div>
+                <div class="flex-block">
+                    <a href=""><img src="images/blue-round.png" alt=""></a>
+                </div>
+                <div class="flex-block">
+                    <a href=""><img src="images/blue-round.png" alt=""></a>
+                </div>
+                <div class="flex-block">
+                    <a href=""><img src="images/blue-round.png" alt=""></a>
+                </div>
+                <div class="flex-block">
+                    <a href=""><img src="images/blue-round.png" alt=""></a>
+                </div>
+                <div class="flex-block">
+                    <a href=""><img src="images/blue-round.png" alt=""></a>
+                </div>
+            </div>
+            <div class="flex-box">
+                <div class="flex-block">
+                    <a href=""><img src="images/blue-round.png" alt=""></a>
+                </div>
+                <div class="flex-block">
+                    <a href=""><img src="images/blue-round.png" alt=""></a>
+                </div>
+                <div class="flex-block">
+                    <a href=""><img src="images/blue-round.png" alt=""></a>
+                </div>
+                <div class="flex-block">
+                    <a href=""><img src="images/blue-round.png" alt=""></a>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="flex-box-wrap">
+            <div class="flex-block-vase">
+                <img src="images/vase1.png" alt="">
+            </div>
+            <div class="flex-block-vase">
+                <img src="images/vase2.png" alt="">
+            </div>
+            <div class="flex-block-vase">
+                <img src="images/vase3.png" alt="">
+            </div>
+            <div class="flex-block-vase">
+                <img src="images/vase4.png" alt="">
+            </div>
+            <div class="flex-block-vase">
+                <img src="images/vase1.png" alt="">
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="footer-container">
+                <p class="footer-text">Designed by Катя Непремудрая и Сестрица Алёнушка</p>
+            </div>
+
+        </div>
+
+    </div>
+
+<script type="text/babel">
+
+   function getParam(sParamName)
+    {
+        var Params = location.search.substring(1).split("&");
+        var variable = "";
+        for (var i = 0; i < Params.length; i++)
+        {
+            if (Params[i].split("=")[0] == sParamName)
+            {
+                if (Params[i].split("=").length > 1) variable = Params[i].split("=")[1];
+
+                return variable; // возвращаем его
+            }
+        }
+        return "";
+    }
+
+    var index;
+
+
+   var objectForUpdate;
+   var objectIndexForUpdate=0;
+    let  tableTemplate;
+
+   class SeatTemplate extends React.Component{
+       constructor(props) {
+           super(props);
+           this.state = {id: ""};
+
+           this.onChooseTicket = this.onChooseTicket.bind(this);
+       }
+
+       onChooseTicket(e){
+           console.log(e.target.alt);
+           objectIndexForUpdate=e.target.alt;
+
+           $.ajax({
+               type:'GET',
+               url: '/tickets/findOne/'+objectIndexForUpdate,
+               async: false,
+               success: function(response) {
+                   console.log(response);
+                   objectForUpdate=response;
+                   document.getElementById("lRow").value=response.row;
+                   document.getElementById("lSeat").value=response.seat;
+                   document.getElementById("lCost").value=response.cost;
+
+               }
+           });
+
+       }
+
+
+       render(){
+           var u=this.onChooseTicket;
+           index=getParam("id");
+           console.log(index);
+
+           $.ajax({
+               type:'GET',
+               url: "/tickets/findByFightId/"+index,
+               async: false,
+               success: function(response) {
+
+                   answerV = response;
+                   console.log(response);
+
+                   tableTemplate = answerV.map((row, i) => {
+
+                       var index = row.id;
+
+                       return ( <a href="#openModal" class="add-button">
+                           <img key={i} onClick={u} src="images/blue-round.png" alt={index}/>
+                       </a>);
+                   });
+
+               }
+   });
+
+           return(
+                   <div class="flex-block">
+
+                       {tableTemplate}
+                   </div>
+           );
+
+       }
+   }
+
+   var answerV;
+
+   ReactDOM.render(
+           <SeatTemplate />,
+       document.getElementById("forReact")
+   )
+
+   /////////////UPDATE
+   var objectForUpdate;
+   var objectIndexForUpdate=0;
+   class UserFormUpdate extends React.Component {
+       constructor(props) {
+           super(props);
+           this.state = {row: ""};
+           this.state={seat:""};
+           this.state={cost:""};
+
+
+           this.handleSubmit = this.handleSubmit.bind(this);
+       }
+
+
+       handleSubmit(e) {
+           e.preventDefault();
+           //  var nameForUpdate=document.getElementById("lName").value;
+           // var damageForUpdate=document.getElementById("lDamage").value;
+           //var costForUpdate=document.getElementById("lCost").value;
+
+           axios.put('/users/buyTicket/'+objectIndexForUpdate)
+               .then(function (response) {
+                   console.log(response);
+                   alert("Билет куплен");
+               })
+               .catch(function (error) {
+                   console.log(error);
+                   alert("Ошибка:(");
+
+               });
+       }
+
+       render() {
+           return (
+                   <form onSubmit={this.handleSubmit}>
+                       <p>
+                           <label>Row:</label><br />
+                           <input id="lRow" type="text" value={this.state.row} disabled />
+                       </p>
+                       <p>
+                           <label>Seat:</label><br />
+                           <input id="lSeat" type="text" value={this.state.seat} disabled/>
+                       </p>
+                       <p>
+                           <label>Price:</label><br />
+                           <input id="lCost" type="text" value={this.state.cost} disabled/>
+                       </p>
+
+                       <input type="submit" value="Buy" class="add-this-city-button"/>
+                   </form>
+
+           );
+       }
+   }
+
+   ReactDOM.render(
+           <UserFormUpdate />,
+       document.getElementById("app")
+   );
+
+
+
+</script>
+</body>
+
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration</title>
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.25.0/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.3/axios.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="stylesheets/styleReg.css" />
+</head>
+<body>
+
+<div class="wrapper">
+
+    <div class="content">
+
+        <nav>
+            <img src="images/logo.png" />
+            <table id="menu">
+                <tr>
+                    <td>
+                        <ul id="nav">
+                            <li >
+
+                                <a href="#" title="Shop">BUY</a>
+
+                                <ul>
+
+                                    <li><a href="BuyTickets.html">Tickets</a></li>
+
+                                    <li><a href="BuyGladiators.html">Gladiators</a></li>
+                                    <li><a href="BuyWeapons.html">Weapons</a></li>
+                                    <li><a href="BuyArmors.html">Armors</a></li>
+
+                                </ul>
+
+                            </li></ul>
+                    </td>
+                    <td><a href="school.html">SCHOOL</a></td>
+                    <td><a href="crud.html">CRUD</a></td>
+                    <td><a href="PersonalArea.html"><img src="images/users.png" /></a></td>
+                    <td><a href="#"><img src="images/open.png" /></a></td>
+                </tr>
+            </table>
+        </nav>
+
+        <div class="flex-background">
+            <div id="app" class="flex-block-registration"></div>
+
+            <div id="openModal" class="modalDialog">
+                <div  class="login-dialog">
+                    <a href="#close" title="Закрыть" class="close">X</a>
+                    <div class="social-button">
+                       <a href="https://oauth.vk.com/authorize?client_id=6302721&redirect_uri=http://localhost:8080/login&response_type=code&state=rjJo4R"><img class="social-img facebook-button" src="images/login-facebook.png" /></a>
+                        <img class="social-img google-button" src="images/login-google.png" />
+                    </div>
+                    <div class="tab-content">
+                        <div id="login">
+                            <div class="field-wrap">
+                                <label>Username</label>
+                                <input type="text"  id="user1"/>
+                                <label>Password</label>
+                                <input type="password" id="pas1" />
+                            </div>
+                            <button class="login-button" onclick="onLogin()" >Login</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <form method="post" action="/reg" class="hiddenForm">
+                <input type="text" name="username" id="user">
+                <input type="password" name="password" id="pas">
+                <input type="submit" id="auth">
+            </form>
+
+
+        </div>
+
+    </div>
+    <div class="footer-container">
+        <p class="footer-text">Designed by Катя Непремудрая и Сестрица Алёнушка</p>
+    </div>
+</div>
+
+<script type="text/babel">
+
+    function onLogin() {
+        document.getElementById("user").value = document.getElementById("user1").value
+        document.getElementById("pas").value = document.getElementById("pas1").value;
+       // alert(document.getElementById("pas").value);
+        //alert(document.getElementById("user").value);
+        document.getElementById("auth").click();
+    }
+
+
+    class UserForm extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {username: ""};
+            this.state = {password: ""};
+            this.state={money:""};
+            this.state={email:""};
+
+            this.onChangeUsername = this.onChangeUsername.bind(this);
+            this.onChangePassword = this.onChangePassword.bind(this);
+            this.onChangeMoney = this.onChangeMoney.bind(this);
+            this.onChangeEmail = this.onChangeEmail.bind(this);
+            this.onLogin = this.onLogin.bind(this);
+
+            this.handleSubmit = this.handleSubmit.bind(this);
+        }
+        onChangeUsername(e) {
+            var val = e.target.value;
+            this.setState({username: val});
+        }
+
+        onChangePassword(e) {
+            var val = e.target.value;
+            this.setState({password: val});
+        }
+
+        onChangeMoney(e) {
+            var val = e.target.value;
+            this.setState({money:val});
+        }
+
+        onChangeEmail(e) {
+            var val = e.target.value;
+            this.setState({email:val});
+        }
+
+        onLogin(e){
+
+        }
+
+        handleSubmit(e) {
+            e.preventDefault();
+          //  alert("username: " + this.state.username+ " password: "+this.state.password+" money: " +this.state.money+" email:"+this.state.email);
+            var usernameForPost=this.state.username;
+            var passwordForPost=this.state.password;
+            var moneyForPost=this.state.money;
+            var emailForPost=this.state.email;
+
+            axios.post('/users', {
+                username: usernameForPost,
+                password:passwordForPost,
+                money: moneyForPost,
+                email:emailForPost
+            })
+                .then(function (response) {
+                    console.log(response);
+                    alert("Вы зарегистрировались");
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    alert("Ошибка:(");
+
+                });
+
+        }
+
+        render() {
+
+            var t=this.onLogin;
+
+            return (
+                    <form onSubmit={this.handleSubmit}>
+                        <p>
+                            <label>Username:</label><br />
+                            <input type="text" value={this.state.username} onChange={this.onChangeUsername}/>
+                        </p>
+                        <p>
+                            <label>Password:</label><br />
+                            <input type="password" value={this.state.password} onChange={this.onChangePassword}/>
+                        </p>
+                        <p>
+                            <label>Money:</label><br />
+                            <input type="text" value={this.state.money} onChange={this.onChangeMoney}/>
+                        </p>
+                        <p>
+                            <label>Email:</label><br />
+                            <input type="text" value={this.state.email} onChange={this.onChangeEmail}/>
+                        </p>
+                        <div class="my-flex-container">
+                            <a href="#openModal" class="have-acc-button my-flex-block ">Already have an account?</a>
+                            <input type="submit" value="Sign Up" class="my-flex-block " id="registration-button-in-form" />
+                        </div>
+
+                    </form>
+            );
+        }
+    }
+
+
+
+    ReactDOM.render(
+            <UserForm />,
+        document.getElementById("app")
+    );
+
+
+
+</script>
+</body>
+</html>

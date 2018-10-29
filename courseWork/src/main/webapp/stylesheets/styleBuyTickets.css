@@ -1,0 +1,218 @@
+
+
+.modalDialog {
+    position: fixed;
+    font-family: Arial, Helvetica, sans-serif;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 99999;
+    -webkit-transition: opacity 400ms ease-in;
+    -moz-transition: opacity 400ms ease-in;
+    transition: opacity 400ms ease-in;
+    display: none;
+    pointer-events: none;
+}
+
+.modalDialog:target {
+    display: block;
+    pointer-events: auto;
+}
+
+.modalDialog > div {
+    width: 400px;
+    position: relative;
+    margin: 10% auto;
+    padding: 5px 20px 13px 20px;
+    border-radius: 10px;
+    background: #fff;
+    background: -moz-linear-gradient(#fff, #999);
+    background: -webkit-linear-gradient(#fff, #999);
+    background: -o-linear-gradient(#fff, #999);
+}
+
+.close {
+    background: #606061;
+    color: #FFFFFF;
+    line-height: 25px;
+    position: absolute;
+    right: -12px;
+    text-align: center;
+    top: -10px;
+    width: 24px;
+    text-decoration: none;
+    font-weight: bold;
+    -webkit-border-radius: 12px;
+    -moz-border-radius: 12px;
+    border-radius: 12px;
+    -moz-box-shadow: 1px 1px 3px #000;
+    -webkit-box-shadow: 1px 1px 3px #000;
+    box-shadow: 1px 1px 3px #000;
+}
+
+
+@font-face {
+    font-family: Goudy Stout;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+nav {
+    font-family: "Goudy Stout";
+    background-color: #983F39;
+}
+
+nav a {
+    text-decoration: none;
+    color: white;
+}
+
+nav img {
+    padding: 5px;
+    width: 70px;
+}
+
+#menu {
+    float: right;
+}
+
+#menu img {
+    padding: 0!important;
+    padding-left: 20px;
+}
+
+#menu a {
+    padding-left: 25px;
+    font-size: 24px;
+}
+
+#menu a:hover {
+    color: #FCA720;
+}
+
+#menu a img:hover {
+    opacity: 0.5;
+}
+input:disabled{
+    color: black;
+}
+select:disabled{
+    color: black;
+}
+
+#nav{
+    float:left;
+    width:100%;
+    list-style:none;
+    font-weight:bold;
+    margin-bottom:10px;
+}
+#nav li{
+    float:left;
+    margin-right:10px;
+    position:relative;
+    display:block;
+}
+#nav li a{
+    display:block;
+    padding:5px;
+    padding-bottom: 10px;
+    font-weight: 510;
+    color:#fff;
+    background:#983f39;
+    text-decoration:none !important;
+    -moz-border-radius:2px;
+    -webkit-border-radius:2px;
+    border-radius:2px;
+}
+#nav li a:hover{
+    color:#fff;
+    background:rgba(252,167,38,0.75); /* Выглядит полупрозрачным */
+}
+
+#nav ul{
+    list-style:none;
+    font-family: Goudy Stout;
+    position:absolute;
+    left:-9999px; /* Скрываем за экраном, когда не нужно (данный метод лучше, чем display:none;) */
+    opacity:0; /* Устанавливаем начальное состояние прозрачности */
+    -webkit-transition:0.25s linear opacity; /* В Webkit выпадающие пункты будут проявляться */
+}
+#nav ul li{
+    padding-top:1px; /* Вводим отступ между li чтобы создать
+    иллюзию разделенных пунктов меню */
+    float:none;
+    background:url(dot.gif);
+}
+#nav ul a{
+    white-space:nowrap; /* Останавливаем перенос текста и создаем многострочный выпадающий пункт */
+    display:block;
+}
+#nav li:hover ul{ /* Выводим выпадающий пункт при наведении курсора */
+    left:-40px; /* Приносим его обратно на экран, когда нужно */
+    opacity:1; /* Делаем непрозрачным */
+}
+#nav li:hover a{ /* Устанавливаем стили для верхнего уровня, когда выводится выпадающий список */
+
+    background:rgba(252,167,38,0.55); /* Выглядит полупрозрачным */
+    text-decoration:underline;
+}
+#nav li:hover ul a{ /* Изменяем некоторые стили верхнего уровня при выводе выпадающего пункта */
+    text-decoration:none;
+    -webkit-transition:-webkit-transform 0.075s linear;
+}
+#nav li:hover ul li a:hover{ /* Устанавливаем стили для выпадающих пунктов, когда курсор наводится на конкретный пункт */
+    background:#333;
+    background:rgba(51,51,51,0.75); /* Будет полупрозрачным */
+    text-decoration:underline;
+    -moz-transform:scale(1.05);
+    -webkit-transform:scale(1.05);
+}
+
+.my-flex-container {
+    align-items: stretch;
+    text-align: center;
+    justify-content: space-around;
+    flex-direction: row;
+    display: flex;
+    flex-wrap:wrap;
+}
+
+.my-flex-block {
+    width: 30vw;
+}
+
+.item1 {
+    background-color: #b8c1ca;
+    border-width: 3px;
+    border-style: solid;
+    border-color: #898988;
+}
+
+.my-inner-flex-container {
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+    display: flex;
+    height: calc(100vh - 100px - 390px);
+    margin-bottom: 10px;
+}
+
+
+.footer-container {
+    height: 80px;
+    background-color: #666666;
+}
+
+.footer-text {
+    font-size: 1em;
+    font-style: italic;
+    margin-left: 20px;
+    padding-top: 25px;
+    margin-top: 0px;
+}

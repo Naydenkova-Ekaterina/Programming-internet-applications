@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>crudTicket</title>
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.25.0/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.3/axios.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/styleCrudCity.css" />
+
+</head>
+<body>
+
+<div class="wrapper">
+
+    <div id="content">
+        <nav>
+            <a href=""><img src="images/logo.png" /></a>
+            <table id="menu">
+                <tr>
+                    <td>
+                        <ul id="nav">
+                            <li >
+
+                                <a href="#" title="Shop">BUY</a>
+
+                                <ul>
+
+                                    <li><a href="BuyTickets.html">Tickets</a></li>
+
+                                    <li><a href="BuyGladiators.html">Gladiators</a></li>
+                                    <li><a href="BuyWeapons.html">Weapons</a></li>
+                                    <li><a href="BuyArmors.html">Armors</a></li>
+
+                                </ul>
+
+                            </li></ul>
+                    </td>
+                    <td><a href="school.html">SCHOOL</a></td>
+                    <td><a href="crud.html">CRUD</a></td>
+                    <td><a href="PersonalArea.html"><img src="images/users.png" /></a></td>
+                    <td><a href="#"><img src="images/open.png" /></a></td>
+                </tr>
+            </table>
+        </nav>
+
+        <div class="back-arrow">
+            <a href="crud.html"><img src="images/arrow.png" /></a>
+        </div>
+
+<div id="container">
+</div>
+
+        <a class="add-button" onClick="refreshTable()">Refresh</a>
+
+<a href="#openModal">Add</a>
+
+<div id="openModal" class="modalDialog">
+    <div>
+        <a href="#close" title="Закрыть" class="close">X</a>
+        <h2>Add a new ticket</h2>
+        <div id="app"></div>
+    </div>
+</div>
+
+
+<div id="openModalUpdate" class="modalDialog">
+    <div>
+        <a href="#close" title="Закрыть" class="close">X</a>
+        <h2>Update this master</h2>
+        <div id="appUpdate"></div>
+    </div>
+</div>
+
+    </div>
+
+    <div class="footer">
+        <div class="footer-container">
+            <p class="footer-text">Designed by Катя Непремудрая и Сестрица Алёнушка</p>
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/babel">
+function refreshTable() {
+    ReactDOM.render(
+            <TicketTable/>,
+        document.getElementById('container')
+    );
+}
+
+    let tableTemplate;
+
+    function makeColumnsTicketNumber(row) {
+        return <td>{row.id}</td>
+    }
+
+    function makeColumnsCost(row) {
+        return   <td> {row.cost}</td>;
+    }
+
+    function makeColumnsFightNumber(row) {
+        return   <td> {row.fight.id}</td>;
+    }
+
+    function makeColumnsRow(row) {
+        return   <td> {row.row}</td>;
+    }
+
+    function makeColumnsSeat(row) {
+        return   <td> {row.seat}</td>;
+    }
+
+    class TicketTable extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {id: ""};
+
+            this.onChangeId = this.onChangeId.bind(this);
+            this.onUpdateModalCall = this.onUpdateModalCall.bind(this);
+
+        }
+
+        onChangeId(e) {
+            var val = e.target.value;
+           // alert(e.target.value);
+
+            axios.delete('/tickets/delete/'+e.target.value)
+                .then(function (response) {
+                    console.log(response);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    if(error.response.status==405){
+                        alert("Права на это действие есть только у администратора.");
+                    }else {
+                        alert("Ошибка:(");
+                    }
+                });
+
+        }
+
+        onUpdateModalCall(e){
+            console.log(e.target.value);
+            objectIndexForUpdate=e.target.value;
+
+            $.ajax({
+                type:'GET',
+                url: '/tickets/findOne/'+objectIndexForUpdate,
+                async: false,
+                success: function(response) {
+                    console.log(response);
+
+
+                 document.getElementById("lRow").value=response.row;
+                   document.getElementById("lSeat").value=response.seat;
+                    document.getElementById("lCost").value=response.cost;
+                    $("#lFight option:selected").text(response.fight.id);
+                }
+            });
+
+        }
+
+        render(){
+            var t=this.onChangeId;
+            var u=this.onUpdateModalCall;
+
+            $.ajax({
+                type:'GET',
+                url: '/tickets',
+                async: false,
+                success: function(response) {
+
+                    answerV = response;
+                    console.log(response);
+
+                    tableTemplate = answerV.map((row, i) => {
+
+                        var index = row.id;
+                        return <tr key={i}>{makeColumnsTicketNumber(row)}{makeColumnsCost(row)}{makeColumnsFightNumber(row)}{makeColumnsRow(row)}{makeColumnsSeat(row)}
+                            <td><button className="but" value={index} onClick={t}>Delete</button></td>
+                            <td><a href="#openModalUpdate"><button value={index} onClick={u}>Update</button></a></td>
+                        </tr>
+                    });
+
+
+                }
+            });
+
+
+            return(
+                    <div class="flex-background">
+                        <div class="flex-block">
+                            <table class="my-table">
+                                <thead>
+                        <tr>
+                            <th>Ticket number</th>
+                            <th>Cost</th>
+                            <th>Fight number</th>
+                            <th>Row</th>
+                            <th>Seat</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+
+                        {tableTemplate}
+
+                        </tbody>
+                            </table>
+                            <a href="#openModal" class="add-button">Add</a>
+
+                        </div>
+                    </div>
+            );
+
+        }
+    }
+
+    var answerV;
+
+    ReactDOM.render(
+            <TicketTable/>,
+        document.getElementById('container')
+    );
+
+
+    class UserForm extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {fight: "1"};
+            this.state = {cost: ""};
+            this.state={row:""};
+            this.state={seat:""};
+
+
+            this.onChangeFight = this.onChangeFight.bind(this);
+            this.onChangeCost = this.onChangeCost.bind(this);
+            this.onChangeRow = this.onChangeRow.bind(this);
+            this.onChangeSeat = this.onChangeSeat.bind(this);
+            this.handleSubmit = this.handleSubmit.bind(this);
+        }
+        onChangeFight(e) {
+            var val = e.target.value;
+            this.setState({fight: val});
+        }
+
+        onChangeCost(e) {
+            var val = e.target.value;
+            this.setState({cost: val});
+        }
+
+        onChangeRow(e) {
+            var val = e.target.value;
+            this.setState({row:val});
+        }
+
+        onChangeSeat(e) {
+            var val = e.target.value;
+            this.setState({seat: val});
+        }
+
+        handleSubmit(e) {
+            e.preventDefault();
+           // alert("Fight: " + this.state.fight+ " cost: "+this.state.cost+" row: " +this.state.row+" seat: "+this.state.seat);
+            var fightForPost;
+            var costForPost=this.state.cost;
+            var rowForPost=this.state.row;
+            var seatForPost=this.state.seat;
+
+
+            /////////////////////////////!!!!!!!!!!!!!!!!!!!!!
+            axios.get('/fights/findOne/'+this.state.fight)
+                .then(function (response) {
+                    fightForPost=response.data;
+                    console.log(response);
+
+                    if( costForPost!="" && rowForPost!="" && seatForPost!="" && fightForPost!=undefined) {
+                        axios.post('/tickets/save', {
+                            fight: fightForPost,
+                            cost: costForPost,
+                            row: rowForPost,
+                            seat: seatForPost
+                        })
+                            .then(function (response) {
+                                console.log(response);
+                                alert("Билет добавлен");
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                                if(error.response.status==405){
+                                    alert("Права на это действие есть только у администратора.");
+                                }else {
+                                    alert("Ошибка:(");
+                                }                            });
+                    }else {
+                        alert("Некорректные данные")
+                    }
+
+
+                });
+
+        }
+
+        render() {
+            return (
+                    <form onSubmit={this.handleSubmit}>
+                        <p>
+                            <label>Fight number:</label><br />
+                            <select selected={this.state.fight} onChange={this.onChangeFight}>
+                                {optionTemplate}
+                            </select>
+                        </p>
+                        <p>
+                            <label>Cost:</label><br />
+                            <input type="text" pattern="^[ 0-9]+$" value={this.state.cost} onChange={this.onChangeCost}/>
+                        </p>
+                        <p>
+                            <label>Row:</label><br />
+                            <input type="text" pattern="^[ 0-9]+$" value={this.state.row} onChange={this.onChangeRow}/>
+
+                        </p>
+                        <p>
+                            <label>Seat:</label><br />
+                            <input type="text" pattern="^[ 0-9]+$" value={this.state.seat} onChange={this.onChangeSeat}/>
+
+                        </p>
+                        <input type="submit" value="Add this ticket" class="add-this-city-button"/>
+                    </form>
+            );
+        }
+    }
+
+    let optionTemplate;
+    axios.get('/fights/getIdFights')
+        .then(function (response) {
+            console.log(response);
+
+            optionTemplate = response.data.map((item, i) => {
+                return <option key={i}>{item}</option>
+            });
+
+            ReactDOM.render(
+                    <UserForm />,
+                document.getElementById("app")
+            );
+        })
+
+
+    /////////////UPDATE
+    var objectIndexForUpdate=0;
+    class UserFormUpdate extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {fight: ""};
+            this.state = {cost: ""};
+            this.state={row:""};
+            this.state={seat:""};
+
+
+            this.onChangeFight = this.onChangeFight.bind(this);
+            this.onChangeCost = this.onChangeCost.bind(this);
+            this.onChangeRow = this.onChangeRow.bind(this);
+            this.onChangeSeat = this.onChangeSeat.bind(this);
+            this.handleSubmit = this.handleSubmit.bind(this);
+        }
+        onChangeFight(e) {
+            var val = e.target.value;
+            this.setState({fight: val});
+        }
+
+        onChangeCost(e) {
+            var val = e.target.value;
+            this.setState({cost: val});
+        }
+
+        onChangeRow(e) {
+            var val = e.target.value;
+            this.setState({row:val});
+        }
+
+        onChangeSeat(e) {
+            var val = e.target.value;
+            this.setState({seat: val});
+        }
+
+        handleSubmit(e) {
+            e.preventDefault();
+            var rowForUpdate=document.getElementById("lRow").value;
+            var seatForUpdate=document.getElementById("lSeat").value;
+            var costForUpdate=document.getElementById("lCost").value;
+            var fightForUpdate=$("#lFight option:selected").text();
+
+
+            axios.get('/fights/findOne/'+fightForUpdate)
+                .then(function (response) {
+                    console.log(response);
+                    var fightObject=response.data;
+                    if (fightObject!=null && costForUpdate!="" && rowForUpdate!="" && seatForUpdate!="") {
+                        axios.put('/tickets/update/' + objectIndexForUpdate, {
+                            fight: fightObject,
+                            cost: costForUpdate,
+                            row: rowForUpdate,
+                            seat: seatForUpdate
+                        })
+                            .then(function (response) {
+                                console.log(response);
+                                alert("Билет обновлён");
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                                if(error.response.status==405){
+                                    alert("Права на это действие есть только у администратора.");
+                                }else {
+                                    alert("Ошибка:(");
+                                }                            });
+                    }else {
+                        alert("Некорректные данные")
+                    }
+
+                })
+
+        }
+
+        render() {
+            return (
+                    <form onSubmit={this.handleSubmit}>
+                        <p>
+                            <label>Fight number:</label><br />
+                            <select id="lFight" selected={this.state.fight} onChange={this.onChangeFight}>
+                                {optionTemplate}
+                            </select>
+                        </p>
+                        <p>
+                            <label>Cost:</label><br />
+                            <input id="lCost" pattern="^[ 0-9]+$" type="text" value={this.state.cost} onChange={this.onChangeCost}/>
+                        </p>
+                        <p>
+                            <label>Row:</label><br />
+                            <input id="lRow" type="text" pattern="^[ 0-9]+$" value={this.state.row} onChange={this.onChangeRow}/>
+
+                        </p>
+                        <p>
+                            <label>Seat:</label><br />
+                            <input id="lSeat" type="text" pattern="^[ 0-9]+$" value={this.state.seat} onChange={this.onChangeSeat}/>
+
+                        </p>
+
+                        <input type="submit" value="Update" class="add-this-city-button"/>
+                    </form>
+
+            );
+        }
+    }
+
+    axios.get('/fights/getIdFights')
+        .then(function (response) {
+            console.log(response);
+
+            optionTemplate = response.data.map((item, i) => {
+                return <option key={i}>{item}</option>
+            });
+
+            ReactDOM.render(
+                    <UserFormUpdate />,
+                document.getElementById("appUpdate")
+            );
+        })
+
+
+
+
+</script>
+</body>
+</html>

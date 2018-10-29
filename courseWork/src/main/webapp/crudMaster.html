@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>crudMaster</title>
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.25.0/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.3/axios.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/styleCrudCity.css" />
+
+</head>
+<body>
+
+
+<div class="wrapper">
+
+    <div id="content">
+        <nav>
+            <a href=""><img src="images/logo.png" /></a>
+            <table id="menu">
+                <tr>
+                    <td>
+                        <ul id="nav">
+                            <li >
+
+                                <a href="#" title="Shop">BUY</a>
+
+                                <ul>
+
+                                    <li><a href="BuyTickets.html">Tickets</a></li>
+
+                                    <li><a href="BuyGladiators.html">Gladiators</a></li>
+                                    <li><a href="BuyWeapons.html">Weapons</a></li>
+                                    <li><a href="BuyArmors.html">Armors</a></li>
+
+                                </ul>
+
+                            </li></ul>
+                    </td>
+                    <td><a href="school.html">SCHOOL</a></td>
+                    <td><a href="crud.html">CRUD</a></td>
+                    <td><a href="PersonalArea.html"><img src="images/users.png" /></a></td>
+                    <td><a href="#"><img src="images/open.png" /></a></td>
+                </tr>
+            </table>
+        </nav>
+
+        <div class="back-arrow">
+            <a href="crud.html"><img src="images/arrow.png" /></a>
+        </div>
+
+
+<div id="container">
+</div>
+
+        <a class="add-button" onClick="refreshTable()">Refresh</a>
+
+<div id="openModal" class="modalDialog">
+    <div>
+        <a href="#close" title="Закрыть" class="close">X</a>
+        <h2>Add a new master</h2>
+        <div id="app"></div>
+    </div>
+</div>
+
+
+<div id="openModalUpdate" class="modalDialog">
+    <div>
+        <a href="#close" title="Закрыть" class="close">X</a>
+        <h2>Update this master</h2>
+        <div id="appUpdate"></div>
+    </div>
+</div>
+
+    </div>
+
+    <div class="footer">
+        <div class="footer-container">
+            <p class="footer-text">Designed by Катя Непремудрая и Сестрица Алёнушка</p>
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/babel">
+    function refreshTable() {
+        ReactDOM.render(
+                <MasterTable/>,
+            document.getElementById('container')
+
+        );
+    }
+
+    let tableTemplate;
+
+    function makeColumnsId(row) {
+        return <td>{row.id}</td>
+    }
+
+    function makeColumnsName(row) {
+        return <td>{row.name}</td>
+    }
+
+    function makeColumnsTitle(row) {
+        return <td>{row.title}</td>
+    }
+
+    function makeColumnsCity(row) {
+        return   <td> {row.city.name}</td>;
+    }
+
+    class MasterTable extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {id: ""};
+
+            this.onChangeId = this.onChangeId.bind(this);
+            this.onUpdateModalCall = this.onUpdateModalCall.bind(this);
+
+        }
+
+        onChangeId(e) {
+            var val = e.target.value;
+        //    alert(e.target.value);
+
+            axios.delete('/masters/delete/'+e.target.value)
+                .then(function (response) {
+                    console.log(response);
+                })
+                .catch(function (error) {
+                    if(error.response.status==405){
+                        alert("Права на это действие есть только у администратора.");
+                    }else {
+                        alert("Ошибка:(");
+                    }                });
+
+        }
+
+        onUpdateModalCall(e){
+            console.log(e.target.value);
+            objectIndexForUpdate=e.target.value;
+
+            $.ajax({
+                type:'GET',
+                url: '/masters/findOne/'+objectIndexForUpdate,
+                async: false,
+                success: function(response) {
+                    console.log(response);
+                    document.getElementById("lName").value=response.name;
+                    $("#lCity option:selected").text(response.city.name);
+                    document.getElementById("lTitle").value=response.title;
+                }
+            });
+
+        }
+
+        render(){
+            var t=this.onChangeId;
+            var u=this.onUpdateModalCall;
+
+            $.ajax({
+                type:'GET',
+                url: '/masters',
+                async: false,
+                success: function(response) {
+
+                    answerV = response;
+                    console.log(response);
+
+                    tableTemplate = answerV.map((row, i) => {
+
+                        var index = row.id;
+                        return <tr key={i}>{makeColumnsId(row)}{makeColumnsName(row)}{makeColumnsTitle(row)}{makeColumnsCity(row)}
+                            <td><button className="but" value={index} onClick={t}>Delete</button></td>
+                            <td><a href="#openModalUpdate"><button value={index} onClick={u}>Update</button></a></td>
+                        </tr>
+                    });
+
+
+                }
+            });
+
+            return(
+                    <div class="flex-background">
+                        <div class="flex-block">
+                            <table class="my-table">
+                                <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Name</th>
+                            <th>Title</th>
+                            <th>City</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+
+                        {tableTemplate}
+
+                        </tbody>
+                            </table>
+                            <a href="#openModal" class="add-button">Add</a>
+
+                        </div>
+                    </div>
+            );
+
+        }
+    }
+    var answerV;
+
+    ReactDOM.render(
+            <MasterTable/>,
+        document.getElementById('container')
+
+    );
+
+
+
+    class UserForm extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {name: ""};
+            this.state = {title: ""};
+            this.state={city:"Рим"};
+
+            this.onChangeName = this.onChangeName.bind(this);
+            this.onChangeTitle = this.onChangeTitle.bind(this);
+            this.onChangeCity = this.onChangeCity.bind(this);
+            this.handleSubmit = this.handleSubmit.bind(this);
+        }
+        onChangeName(e) {
+            var val = e.target.value;
+            this.setState({name: val});
+        }
+
+        onChangeTitle(e) {
+            var val = e.target.value;
+            this.setState({title: val});
+        }
+
+        onChangeCity(e) {
+            var val = e.target.value;
+            this.setState({city:val});
+        }
+
+        handleSubmit(e) {
+            e.preventDefault();
+           // alert("Имя: " + this.state.name+ " title: "+this.state.title+" city: " +this.state.city);
+            var nameForPost=this.state.name;
+            var titleForPost=this.state.title;
+            var cityForPost;
+
+            axios.get('/cities/name/'+this.state.city)
+                .then(function (response) {
+                    cityForPost=response.data;
+                    console.log(response);
+
+                    if(nameForPost!=null && titleForPost!=null && cityForPost!=null) {
+                        axios.post('/masters/save', {
+                            name: nameForPost,
+                            title: titleForPost,
+                            city: cityForPost
+                        })
+                            .then(function (response) {
+                                console.log(response);
+                                alert("Хозяин добавлен");
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                                if(error.response.status==405){
+                                    alert("Права на это действие есть только у администратора.");
+                                }else {
+                                    alert("Ошибка:(");
+                                }                            });
+                    }else {
+                        alert("Некорректные данные")
+                    }
+
+                });
+
+        }
+
+        render() {
+            return (
+                    <form onSubmit={this.handleSubmit}>
+                        <p>
+                            <label>Name:</label><br />
+                            <input type="text" pattern="^[A-Za-zА-Яа-яЁё]+$" value={this.state.name} onChange={this.onChangeName}/>
+                        </p>
+                        <p>
+                            <label>Title:</label><br />
+                            <input type="text" pattern="^[A-Za-zА-Яа-яЁё]+$" value={this.state.title} onChange={this.onChangeTitle}/>
+                        </p>
+                        <p>
+                            <label>City:</label><br />
+                            <select selected={this.state.city} onChange={this.onChangeCity}>
+                                {optionTemplate}
+                            </select>
+                        </p>
+                        <input type="submit" value="Add this master" class="add-this-city-button"/>
+                    </form>
+            );
+        }
+    }
+
+    let optionTemplate;
+    axios.get('/cities/getCityNames')
+        .then(function (response) {
+            console.log(response);
+
+            optionTemplate = response.data.map((item, i) => {
+                return <option key={i}>{item}</option>
+            });
+
+            ReactDOM.render(
+                    <UserForm />,
+                document.getElementById("app")
+            );
+        })
+
+    /////////////UPDATE
+    var objectIndexForUpdate=0;
+    class UserFormUpdate extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {name: ""};
+            this.state={city:""};
+            this.state={title:""};
+
+
+            this.onChangeTitle = this.onChangeTitle.bind(this);
+            this.onChangeName = this.onChangeName.bind(this);
+            this.onChangeCity = this.onChangeCity.bind(this);
+            this.handleSubmit = this.handleSubmit.bind(this);
+        }
+        onChangeName(e) {
+            var val = e.target.value;
+            this.setState({name: val});
+        }
+
+        onChangeCity(e) {
+            var val = e.target.value;
+            this.setState({city:val});
+        }
+
+        onChangeTitle(e) {
+            var val = e.target.value;
+            this.setState({title:val});
+        }
+
+        handleSubmit(e) {
+            e.preventDefault();
+            var nameForUpdate=document.getElementById("lName").value;
+            var titleForUpdate=document.getElementById("lTitle").value;
+            var cityForUpdate=$("#lCity option:selected").text();
+
+
+            axios.get('/cities/name/'+cityForUpdate)
+                .then(function (response) {
+                    console.log(response);
+                    var cityObject=response.data;
+                    if(nameForUpdate!="" && titleForUpdate!="" && cityForUpdate!="") {
+                        axios.put('/masters/update/' + objectIndexForUpdate, {
+                            name: nameForUpdate,
+                            city: cityObject,
+                            title: titleForUpdate
+                        })
+                            .then(function (response) {
+                                console.log(response);
+                                alert("Хозяин обновлён");
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                                if(error.response.status==405){
+                                    alert("Права на это действие есть только у администратора.");
+                                }else {
+                                    alert("Ошибка:(");
+                                }                            });
+                    }else {
+                        alert("Некорректные данные")
+                    }
+
+                })
+
+        }
+
+        render() {
+            return (
+                    <form onSubmit={this.handleSubmit}>
+                        <p>
+                            <label>Name:</label><br />
+                            <input id="lName" pattern="^[A-Za-zА-Яа-яЁё]+$" type="text" value={this.state.name} onChange={this.onChangeName}/>
+                        </p>
+                        <p>
+                            <label>Title:</label><br />
+                            <input id="lTitle" pattern="^[A-Za-zА-Яа-яЁё]+$" type="text" value={this.state.title} onChange={this.onChangeTitle}/>
+                        </p>
+                        <p>
+                            <label>City:</label><br />
+                            <select id="lCity" selected={this.state.city} onChange={this.onChangeCity}>
+                                {optionTemplate}
+                            </select>
+                        </p>
+
+                        <input type="submit" value="Update" class="add-this-city-button"/>
+                    </form>
+
+            );
+        }
+    }
+
+    axios.get('/cities/getCityNames')
+        .then(function (response) {
+            console.log(response);
+
+            optionTemplate = response.data.map((item, i) => {
+                return <option key={i}>{item}</option>
+            });
+
+            ReactDOM.render(
+                    <UserFormUpdate />,
+                document.getElementById("appUpdate")
+            );
+        })
+
+
+
+
+</script>
+</body>
+</html>

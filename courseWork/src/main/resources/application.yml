@@ -1,0 +1,15 @@
+security:
+  oauth2:
+    client:
+      clientId: 6302721
+      clientSecret: 
+      accessTokenUri: https://oauth.vk.com/access_token
+      userAuthorizationUri: https://oauth.vk.com/authorize
+      tokenName: code
+      authenticationScheme: query
+      clientAuthenticationScheme: form
+      grant-type: authorization_code
+    resource:
+      userInfoUri: https://api.vk.com/method/users.get
+
+

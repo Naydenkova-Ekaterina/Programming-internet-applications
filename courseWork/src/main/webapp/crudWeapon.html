@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>crudWeapon</title>
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.25.0/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.3/axios.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/styleCrudCity.css" />
+
+</head>
+<body>
+
+<div class="wrapper">
+
+    <div id="content">
+        <nav>
+            <a href=""><img src="images/logo.png" /></a>
+            <table id="menu">
+                <tr>
+                    <td>
+                        <ul id="nav">
+                            <li >
+
+                                <a href="#" title="Shop">BUY</a>
+
+                                <ul>
+
+                                    <li><a href="BuyTickets.html">Tickets</a></li>
+
+                                    <li><a href="BuyGladiators.html">Gladiators</a></li>
+                                    <li><a href="BuyWeapons.html">Weapons</a></li>
+                                    <li><a href="BuyArmors.html">Armors</a></li>
+
+                                </ul>
+
+                            </li></ul>
+                    </td>
+                    <td><a href="school.html">SCHOOL</a></td>
+                    <td><a href="crud.html">CRUD</a></td>
+                    <td><a href="PersonalArea.html"><img src="images/users.png" /></a></td>
+                    <td><a href="#"><img src="images/open.png" /></a></td>
+                </tr>
+            </table>
+        </nav>
+
+        <div class="back-arrow">
+            <a href="crud.html"><img src="images/arrow.png" /></a>
+        </div>
+
+<div id="container">
+</div>
+
+        <a class="add-button" onClick="refreshTable()">Refresh</a>
+
+<div id="openModal" class="modalDialog">
+    <div>
+        <a href="#close" title="Закрыть" class="close">X</a>
+        <h2>Add a new weapon</h2>
+        <div id="app"></div>
+    </div>
+</div>
+
+
+<div id="openModalUpdate" class="modalDialog">
+    <div>
+        <a href="#close" title="Закрыть" class="close">X</a>
+        <h2>Update this weapon</h2>
+        <div id="appUpdate"></div>
+    </div>
+</div>
+
+    </div>
+
+    <div class="footer">
+        <div class="footer-container">
+            <p class="footer-text">Designed by Катя Непремудрая и Сестрица Алёнушка</p>
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/babel">
+    function refreshTable() {
+        ReactDOM.render(
+                <WeaponTable/>,
+            document.getElementById('container')
+
+        );
+    }
+
+    let tableTemplate;
+
+    function makeColumnsId(row) {
+        return <td>{row.id}</td>
+    }
+
+    function makeColumnsName(row) {
+        return <td>{row.name}</td>
+    }
+
+    function makeColumnsDamage(row) {
+        return   <td> {row.damage}</td>;
+    }
+
+    function makeColumnsCost(row) {
+        return   <td> {row.cost}</td>;
+    }
+
+    class WeaponTable extends React.Component{
+
+        constructor(props) {
+            super(props);
+            this.state = {id: ""};
+
+            this.onChangeId = this.onChangeId.bind(this);
+            this.onUpdateModalCall = this.onUpdateModalCall.bind(this);
+
+        }
+
+        onChangeId(e) {
+            var val = e.target.value;
+        //    alert(e.target.value);
+
+            axios.delete('/weapons/delete/'+e.target.value)
+                .then(function (response) {
+                    console.log(response);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    if(error.response.status==405){
+                        alert("Права на это действие есть только у администратора.");
+                    }else {
+                        alert("Ошибка:(");
+                    }
+                });
+
+        }
+
+        onUpdateModalCall(e){
+            console.log(e.target.value);
+            objectIndexForUpdate=e.target.value;
+
+            $.ajax({
+                type:'GET',
+                url: '/weapons/findOne/'+objectIndexForUpdate,
+                async: false,
+                success: function(response) {
+                    console.log(response);
+                    objectForUpdate=response;
+                    document.getElementById("lName").value=response.name;
+                    document.getElementById("lDamage").value=response.damage;
+                    document.getElementById("lCost").value=response.cost;
+
+                }
+            });
+
+        }
+        render(){
+            var t=this.onChangeId;
+            var u=this.onUpdateModalCall;
+
+            $.ajax({
+                type:'GET',
+                url: '/weapons',
+                async: false,
+                success: function(response) {
+
+                    answerV = response;
+                    console.log(response);
+
+                    tableTemplate = answerV.map((row, i) => {
+
+                        var index = row.id;
+                        return <tr key={i}>{makeColumnsId(row)}{makeColumnsName(row)}{makeColumnsDamage(row)}{makeColumnsCost(row)}
+                            <td><button className="but" value={index} onClick={t}>Delete</button></td>
+                            <td><a href="#openModalUpdate"><button value={index} onClick={u}>Update</button></a></td>
+                        </tr>
+                    });
+
+
+                }
+            });
+
+            return(
+                    <div class="flex-background">
+                        <div class="flex-block">
+                            <table class="my-table">
+                                <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Name</th>
+                            <th>Damage</th>
+                            <th>Cost</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+
+                        {tableTemplate}
+
+                        </tbody>
+                            </table>
+                            <a href="#openModal" class="add-button">Add</a>
+
+                        </div>
+                    </div>
+            );
+
+        }
+    }
+
+    var answerV;
+
+
+    ReactDOM.render(
+            <WeaponTable/>,
+        document.getElementById('container')
+
+    );
+
+
+    class UserForm extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {name: ""};
+            this.state={damage:""};
+            this.state={cost:""};
+            this.state={weaponimage:""};
+
+            this.onChangeName = this.onChangeName.bind(this);
+            this.onChangeDamage = this.onChangeDamage.bind(this);
+            this.onChangeCost = this.onChangeCost.bind(this);
+            this.onChangeIcon = this.onChangeIcon.bind(this);
+            this.handleSubmit = this.handleSubmit.bind(this);
+        }
+        onChangeName(e) {
+            var val = e.target.value;
+            this.setState({name: val});
+        }
+
+        onChangeDamage(e) {
+            var val = e.target.value;
+            this.setState({damage:val});
+        }
+
+        onChangeCost(e) {
+            var val = e.target.value;
+            this.setState({cost:val});
+        }
+
+        onChangeIcon(e){
+            var val = e.target.alt;
+            this.setState({weaponimage:val});
+        }
+
+        handleSubmit(e) {
+            e.preventDefault();
+         //   alert("Имя: " + this.state.name+ " урон: " +this.state.damage+" цена: "+this.state.cost);
+           if(this.state.name!="" && this.state.damage!="" && this.state.cost!="" && this.state.weaponimage!="") {
+               axios.post('/weapons/save', {
+                   name: this.state.name,
+                   damage: this.state.damage,
+                   cost: this.state.cost,
+                   weaponimage:this.state.weaponimage
+               })
+                   .then(function (response) {
+                       console.log(response);
+                       alert("Оружие добавлено");
+                   })
+                   .catch(function (error) {
+                       console.log(error);
+                       if(error.response.status==405){
+                           alert("Права на это действие есть только у администратора.");
+                       }else {
+                           alert("Ошибка:(");
+                       }                   });
+           }else {
+               alert("Некорректные данные")
+           }
+        }
+
+        render() {
+            return (
+                    <form onSubmit={this.handleSubmit}>
+                        <p>
+                            <label>Name:</label><br />
+                            <input type="text" pattern="^[A-Za-zА-Яа-яЁё]+$" value={this.state.name} onChange={this.onChangeName}/>
+                        </p>
+                        <p>
+                            <label>Damage:</label><br />
+                            <input type="text" pattern="^[ 0-9]+$" value={this.state.damage} onChange={this.onChangeDamage}/>
+                        </p>
+                        <p>
+                            <label>Cost:</label><br />
+                            <input type="text" pattern="^[ 0-9]+$" value={this.state.cost} onChange={this.onChangeCost}/>
+                        </p>
+                        <p>
+                            <label>Choose icon:</label><br />
+                            <img src="images/2.png" alt="2.png" onClick={this.onChangeIcon} width="50px" height="50px"/>
+                            <img src="images/6cQzf3vVg4I.jpg" alt="6cQzf3vVg4I.jpg" onClick={this.onChangeIcon} width="50px" height="50px"/>
+                            <img src="images/BkTKTNDmIqU.jpg" alt="BkTKTNDmIqU.jpg" onClick={this.onChangeIcon} width="50px" height="50px"/>
+                            <img src="images/DK9XYCCWdzY.jpg" alt="DK9XYCCWdzY.jpg" onClick={this.onChangeIcon} width="50px" height="50px"/>
+                            <img src="images/MwMp3S69sFk.jpg" alt="MwMp3S69sFk.jpg" onClick={this.onChangeIcon} width="50px" height="50px"/>
+                            <img src="images/OYruLWUddzY.jpg" alt="OYruLWUddzY.jpg" onClick={this.onChangeIcon} width="50px" height="50px"/>
+                            <img src="images/VwXp7Rch4tM.jpg" alt="VwXp7Rch4tM.jpg" onClick={this.onChangeIcon} width="50px" height="50px"/>
+                            <img src="images/vyFBdB9YmOk.jpg" alt="vyFBdB9YmOk.jpg" onClick={this.onChangeIcon} width="50px" height="50px"/>
+                            <img src="images/wZUp8sqtcDc.jpg" alt="wZUp8sqtcDc.jpg" onClick={this.onChangeIcon} width="50px" height="50px"/>
+
+                        </p>
+                        <input type="submit" value="Add this weapon" class="add-this-city-button"/>
+                    </form>
+            );
+        }
+    }
+    ReactDOM.render(
+            <UserForm />,
+        document.getElementById("app")
+    )
+
+
+    /////////////UPDATE
+    var objectForUpdate;
+    var objectIndexForUpdate=0;
+    class UserFormUpdate extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {name: ""};
+            this.state={damage:""};
+            this.state={reward:""};
+            this.state={weaponimage:""};
+
+            this.onChangeName = this.onChangeName.bind(this);
+            this.onChangeDamage = this.onChangeDamage.bind(this);
+            this.onChangeCost = this.onChangeCost.bind(this);
+            this.onChangeIcon = this.onChangeIcon.bind(this);
+            this.handleSubmit = this.handleSubmit.bind(this);
+        }
+        onChangeName(e) {
+            var val = e.target.value;
+            this.setState({name: val});
+        }
+
+        onChangeDamage(e) {
+            var val = e.target.value;
+            this.setState({damage:val});
+        }
+
+        onChangeCost(e) {
+            var val = e.target.value;
+            this.setState({cost:val});
+        }
+
+        onChangeIcon(e){
+            var val = e.target.alt;
+            this.setState({weaponimage:val});
+        }
+
+        handleSubmit(e) {
+            e.preventDefault();
+            var nameForUpdate=document.getElementById("lName").value;
+            var damageForUpdate=document.getElementById("lDamage").value;
+            var costForUpdate=document.getElementById("lCost").value;
+
+           // alert("Имя: " + this.state.name+ " кол-во жителей: " +this.state.reward);
+            if(nameForUpdate!="" && damageForUpdate!="" && costForUpdate!="") {
+                axios.put('/weapons/update/' + objectIndexForUpdate, {
+                    name: nameForUpdate,
+                    damage: damageForUpdate,
+                    cost: costForUpdate
+                })
+                    .then(function (response) {
+                        console.log(response);
+                        alert("Оружие обновлено");
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        if(error.response.status==405){
+                            alert("Права на это действие есть только у администратора.");
+                        }else {
+                            alert("Ошибка:(");
+                        }
+                    });
+            }else {
+                alert("Некорректные данные")
+            }
+        }
+
+        render() {
+            return (
+                    <form onSubmit={this.handleSubmit}>
+                        <p>
+                            <label>Name:</label><br />
+                            <input id="lName" type="text" pattern="^[A-Za-zА-Яа-яЁё]+$" value={this.state.name} onChange={this.onChangeName}/>
+                        </p>
+                        <p>
+                            <label>Damage:</label><br />
+                            <input id="lDamage" type="text" pattern="^[ 0-9]+$" value={this.state.damage} onChange={this.onChangeDamage}/>
+                        </p>
+                        <p>
+                            <label>Cost:</label><br />
+                            <input id="lCost" type="text" pattern="^[ 0-9]+$" value={this.state.cost} onChange={this.onChangeCost}/>
+                        </p>
+                        <p>
+                            <label>Choose icon:</label><br />
+                            <img src="images/2.png" alt="2.png" onClick={this.onChangeIcon} width="50px" height="50px"/>
+                            <img src="images/6cQzf3vVg4I.jpg" alt="6cQzf3vVg4I.jpg" onClick={this.onChangeIcon} width="50px" height="50px"/>
+                            <img src="images/BkTKTNDmIqU.jpg" alt="BkTKTNDmIqU.jpg" onClick={this.onChangeIcon} width="50px" height="50px"/>
+                            <img src="images/DK9XYCCWdzY.jpg" alt="DK9XYCCWdzY.jpg" onClick={this.onChangeIcon} width="50px" height="50px"/>
+                            <img src="images/MwMp3S69sFk.jpg" alt="MwMp3S69sFk.jpg" onClick={this.onChangeIcon} width="50px" height="50px"/>
+                            <img src="images/OYruLWUddzY.jpg" alt="OYruLWUddzY.jpg" onClick={this.onChangeIcon} width="50px" height="50px"/>
+                            <img src="images/VwXp7Rch4tM.jpg" alt="VwXp7Rch4tM.jpg" onClick={this.onChangeIcon} width="50px" height="50px"/>
+                            <img src="images/vyFBdB9YmOk.jpg" alt="vyFBdB9YmOk.jpg" onClick={this.onChangeIcon} width="50px" height="50px"/>
+                            <img src="images/wZUp8sqtcDc.jpg" alt="wZUp8sqtcDc.jpg" onClick={this.onChangeIcon} width="50px" height="50px"/>
+
+                        </p>
+                        <input type="submit" value="Update" class="add-this-city-button"/>
+                    </form>
+
+            );
+        }
+    }
+
+    ReactDOM.render(
+            <UserFormUpdate />,
+        document.getElementById("appUpdate")
+    );
+
+
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>crudCity</title>
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.25.0/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.3/axios.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/styleCrudCity.css" />
+
+</head>
+<body>
+
+
+<div class="wrapper">
+
+    <div id="content">
+        <nav>
+            <a href=""><img src="images/logo.png" /></a>
+            <table id="menu">
+                <tr>
+                    <td>
+                        <ul id="nav">
+                            <li >
+
+                                <a href="#" title="Shop">BUY</a>
+
+                                <ul>
+
+                                    <li><a href="BuyTickets.html">Tickets</a></li>
+
+                                    <li><a href="BuyGladiators.html">Gladiators</a></li>
+                                    <li><a href="BuyWeapons.html">Weapons</a></li>
+                                    <li><a href="BuyArmors.html">Armors</a></li>
+
+                                </ul>
+
+                            </li></ul>
+                    </td>
+                    <td><a href="school.html">SCHOOL</a></td>
+                    <td><a href="crud.html">CRUD</a></td>
+                    <td><a href="PersonalArea.html"><img src="images/users.png" /></a></td>
+                    <td><a href="#"><img src="images/open.png" /></a></td>
+                </tr>
+            </table>
+        </nav>
+
+        <div class="back-arrow">
+            <a href="crud.html"><img src="images/arrow.png" /></a>
+        </div>
+
+<div id="container">
+</div>
+
+        <a class="add-button" onClick="refreshTable()">Refresh</a>
+
+<div id="openModal" class="modalDialog">
+    <div>
+        <a href="#close" title="Закрыть" class="close">X</a>
+        <h2>Add a new city</h2>
+        <div id="app"></div>
+    </div>
+</div>
+
+
+<div id="openModalUpdate" class="modalDialog">
+    <div>
+        <a href="#close" title="Закрыть" class="close">X</a>
+        <h2>Update this city</h2>
+        <div id="appUpdate"></div>
+    </div>
+</div>
+
+    </div>
+
+    <div class="footer">
+        <div class="footer-container">
+            <p class="footer-text">Designed by Катя Непремудрая и Сестрица Алёнушка</p>
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/babel">
+    function refreshTable() {
+        ReactDOM.render(
+                <CityTable/>,
+            document.getElementById('container')
+
+        );
+    }
+
+    let tableTemplate;
+
+    function makeColumnsId(row) {
+
+        return <td>{row.id}</td>
+    }
+
+    function makeColumnsName(row) {
+        return <td>{row.name}</td>
+    }
+
+    function makeColumnsRes(row) {
+       return   <td> {row.numberOfResidents}</td>;
+    }
+
+
+    class CityTable extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {id: ""};
+
+            this.onChangeId = this.onChangeId.bind(this);
+            this.onUpdateModalCall = this.onUpdateModalCall.bind(this);
+        }
+
+        onChangeId(e) {
+            var val = e.target.value;
+
+                axios.delete('/cities/delete/' + e.target.value)
+                    .then(function (response) {
+                        console.log(response);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        console.log(error.response.status);
+                        if(error.response.status==405){
+                            alert("Права на это действие есть только у администратора.");
+                        }else {
+                            alert("Ошибка:(");
+                        }
+                    });
+
+        }
+
+        onUpdateModalCall(e){
+            console.log(e.target.value);
+            objectIndexForUpdate=e.target.value;
+
+            $.ajax({
+                type:'GET',
+                url: '/cities/findOne/id/'+objectIndexForUpdate,
+                async: false,
+                success: function(response) {
+                    console.log(response);
+                    objectForUpdate=response;
+                    document.getElementById("lName").value=response.name;
+                    document.getElementById("lNumber").value=response.numberOfResidents;
+                }
+            });
+
+        }
+
+
+    render(){
+            var t=this.onChangeId;
+        var u=this.onUpdateModalCall;
+        $.ajax({
+            type:'GET',
+            url: '/cities',
+            async: false,
+            success: function(response) {
+
+                answerV = response;
+                console.log(response);
+
+                tableTemplate = answerV.map((row, i) => {
+
+                    var index = row.id;
+
+                    return <tr key={i}>{makeColumnsId(row)}{makeColumnsName(row)}{makeColumnsRes(row)}
+                        <td><button className="but" value={index} onClick={t}>Delete</button></td>
+                        <td><a href="#openModalUpdate"><button value={index} onClick={u}>Update</button></a></td>
+                    </tr>
+                });
+
+
+            }
+        });
+
+        return(
+                <div class="flex-background">
+                    <div class="flex-block">
+                <table class="my-table">
+                    <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>NumberOfResidents</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+
+                    {tableTemplate}
+                    <tr>
+
+                    </tr>
+                    </tbody>
+                </table>
+                        <a href="#openModal" class="add-button">Add</a>
+
+                    </div>
+                </div>
+        );
+
+    }
+}
+
+var answerV;
+
+
+    ReactDOM.render(
+            <CityTable/>,
+        document.getElementById('container')
+
+    );
+
+
+    class UserForm extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {name: ""};
+            this.state={numberOfResidents:""};
+
+            this.onChangeName = this.onChangeName.bind(this);
+            this.onChangeNumberOfResidents = this.onChangeNumberOfResidents.bind(this);
+            this.handleSubmit = this.handleSubmit.bind(this);
+        }
+        onChangeName(e) {
+            var val = e.target.value;
+            this.setState({name: val});
+        }
+
+        onChangeNumberOfResidents(e) {
+            var val = e.target.value;
+            this.setState({numberOfResidents:val});
+        }
+
+        handleSubmit(e) {
+            e.preventDefault();
+           // alert("Имя: " + this.state.name+ " кол-во жителей: " +this.state.numberOfResidents);
+
+            if(this.state.name!="" && this.state.numberOfResidents!="") {
+
+                axios.post('/cities/save', {
+                    name: this.state.name,
+                    numberOfResidents: this.state.numberOfResidents
+                })
+                    .then(function (response) {
+                        console.log(response);
+                        alert("Город добавлен")
+                    })
+                    .catch(function (error) {
+                        if(error.response.status==405){
+                            alert("Права на это действие есть только у администратора.");
+                        }else {
+                            alert("Ошибка:(");
+                        }                    });
+            }else {
+                alert("Некорректные данные")
+            }
+
+        }
+
+        render() {
+            return (
+                    <form onSubmit={this.handleSubmit}>
+                        <p>
+                            <label>Name:</label><br />
+                            <input type="text" pattern="^[A-Za-zА-Яа-яЁё]+$" value={this.state.name} onChange={this.onChangeName}/>
+                        </p>
+                        <p>
+                            <label>Number of residents:</label><br />
+                            <input type="text" pattern="^[ 0-9]+$" value={this.state.numberOfResidents} onChange={this.onChangeNumberOfResidents}/>
+                        </p>
+
+                        <input type="submit" value="Add this city" class="add-this-city-button"/>
+                    </form>
+
+            );
+        }
+    }
+    ReactDOM.render(
+            <UserForm />,
+        document.getElementById("app")
+    )
+
+
+    /////////////UPDATE
+    var objectForUpdate;
+    var objectIndexForUpdate=0;
+    class UserFormUpdate extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {name: ""};
+            this.state={numberOfResidents:""};
+
+            this.onChangeName = this.onChangeName.bind(this);
+            this.onChangeNumberOfResidents = this.onChangeNumberOfResidents.bind(this);
+            this.handleSubmit = this.handleSubmit.bind(this);
+        }
+        onChangeName(e) {
+            var val = e.target.value;
+            this.setState({name: val});
+        }
+
+        onChangeNumberOfResidents(e) {
+            var val = e.target.value;
+            this.setState({numberOfResidents:val});
+        }
+
+        handleSubmit(e) {
+            e.preventDefault();
+            var nameForUpdate=document.getElementById("lName").value;
+            var numberForUpdate=document.getElementById("lNumber").value;
+          //  alert("Имя: " + this.state.name+ " кол-во жителей: " +this.state.numberOfResidents);
+            if(nameForUpdate!="" && numberForUpdate!="") {
+                axios.put('/cities/update/' + objectIndexForUpdate, {
+                    name: nameForUpdate,
+                    numberOfResidents: numberForUpdate
+                })
+                    .then(function (response) {
+                        console.log(response);
+                        alert("Город обновлён")
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        if(error.response.status==405){
+                            alert("Права на это действие есть только у администратора.");
+                        }else {
+                            alert("Ошибка:(");
+                        }
+                    });
+            }else {
+                alert("Некорректные данные")
+            }
+        }
+
+        render() {
+            return (
+                    <form onSubmit={this.handleSubmit}>
+                        <p>
+                            <label>Name:</label><br />
+                            <input id="lName" type="text" pattern="^[A-Za-zА-Яа-яЁё]+$" onClick ={this.onChangeName}/>
+                        </p>
+                        <p>
+                            <label>Number of residents:</label><br />
+                            <input id="lNumber" type="text" pattern="^[ 0-9]+$" onClick={this.onChangeNumberOfResidents}/>
+                        </p>
+
+                        <input type="submit" value="Update" class="add-this-city-button"/>
+                    </form>
+
+            );
+        }
+    }
+
+
+    ReactDOM.render(
+            <UserFormUpdate />,
+        document.getElementById("appUpdate")
+    );
+
+
+
+</script>
+
+</body>
+</html>

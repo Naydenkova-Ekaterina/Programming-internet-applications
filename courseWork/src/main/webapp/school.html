@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>School</title>
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.25.0/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.3/axios.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="stylesheets/styleSchool.css" />
+</head>
+<body>
+
+<nav>
+    <a href="index.html"><img src="images/logo.png" /></a>
+    <table id="menu">
+        <tr>
+            <td>
+                <ul id="nav">
+                    <li >
+
+                        <a href="#" title="Shop">BUY</a>
+
+                        <ul>
+
+                            <li><a href="BuyTickets.html">Tickets</a></li>
+
+                            <li><a href="BuyGladiators.html">Gladiators</a></li>
+                            <li><a href="BuyWeapons.html">Weapons</a></li>
+                            <li><a href="BuyArmors.html">Armors</a></li>
+
+                        </ul>
+
+                    </li></ul>
+            </td>
+            <td><a href="school.html">SCHOOL</a></td>
+            <td><a href="crud.html">CRUD</a></td>
+            <td><a href="PersonalArea.html"><img src="images/users.png" /></a></td>
+            <td><a href="#"><img src="images/open.png" /></a></td>
+        </tr>
+    </table>
+</nav>
+
+<div id="container"  class="my-flex-container" >
+
+</div>
+
+<!--
+<div class="my-flex-container">
+    <div class="my-flex-block item1 my-inner-flex-container">
+        <p class="item-text">Thracian school</p>
+        <img class="images-in-line" src="images/school1.png" />
+        <button type="submit" class="test-button">Start test</button>
+    </div>
+    <div class="my-flex-block item2 my-inner-flex-container">
+        <p class="item-text">school of gauls</p>
+        <img class="images-in-line" src="images/school2.png" />
+        <button type="submit" class="test-button">Start test</button>
+    </div>
+    <div class="my-flex-block item3 my-inner-flex-container">
+        <p class="item-text red-text">Кафедра вт</p>
+        <img class="images-in-line" src="images/kotel.png" />
+        <button type="submit" class="test-button">Start test</button>
+    </div>
+</div>
+-->
+
+
+<div class="footer-container">
+    <p class="footer-text">Designed by Катя Непремудрая и Сестрица Алёнушка</p>
+</div>
+
+
+
+
+
+<script type="text/babel">
+
+
+
+    let tableTemplate;
+
+
+    class SchoolsTable extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {id: ""};
+
+              this.onChangeId = this.onChangeId.bind(this);
+        }
+
+          onChangeId(e) {
+          var val = e.target.alt;
+//alert(val);
+          axios.put('/masters/invest/'+val)
+          .then(function (response) {
+          console.log(response);
+          alert("Теперь вы входите в акционерное общество данной школы");
+      })
+          .catch(function (error) {
+          console.log(error);
+          alert("Ошибка");
+      });
+
+      }
+
+        render(){
+           var t=this.onChangeId;
+            $.ajax({
+                type:'GET',
+                url: '/schools',
+                async: false,
+                success: function(response) {
+
+                    answerV = response;
+                    console.log(response);
+
+                    tableTemplate = answerV.map((row, i) => {
+
+                        var index = row.id;
+                        var nameSchool=row.name;
+                        var linkImage="images/"+row.schoolimage;
+                        var link="test.html?id="+index;
+                        return <form>
+                            <div key={i} class="my-flex-block item1 my-inner-flex-container">
+                                <p class="item-text">{nameSchool}</p>
+                                <img class="images-in-line" src={linkImage}/>
+                                <a href={link} ><input type="button" class="test-button" value="Start test"/></a>
+                                <input type="button" class="test-button"  onClick={t} value="Invest money" alt={index} ></input>
+                            </div>
+                        </form>
+                    });
+
+
+                }
+            });
+
+            return(
+                    <div class="my-flex-container">
+                        {tableTemplate}
+                    </div>
+            );
+
+        }
+    }
+
+    var answerV;
+
+
+    ReactDOM.render(
+            <SchoolsTable/>,
+        document.getElementById('container')
+
+    );
+
+
+
+</script>
+
+</body>
+</html>

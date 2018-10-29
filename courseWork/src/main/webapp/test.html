@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test</title>
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.25.0/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.3/axios.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="stylesheets/styleTest.css" />
+
+</head>
+<body>
+
+
+<div class="wrapper">
+
+    <div id="content">
+        <nav>
+            <a href=""><img src="images/logo.png" /></a>
+            <table id="menu">
+                <tr>
+                    <td>
+                        <ul id="nav">
+                            <li >
+
+                                <a href="#" title="Shop">BUY</a>
+
+                                <ul>
+
+                                    <li><a href="BuyTickets.html">Tickets</a></li>
+
+                                    <li><a href="BuyGladiators.html">Gladiators</a></li>
+                                    <li><a href="BuyWeapons.html">Weapons</a></li>
+                                    <li><a href="BuyArmors.html">Armors</a></li>
+
+                                </ul>
+
+                            </li></ul>
+                    </td>
+                    <td><a href="school.html">SCHOOL</a></td>
+                    <td><a href="crud.html">CRUD</a></td>
+                    <td><a href="PersonalArea.html"><img src="images/users.png" /></a></td>
+                    <td><a href="#"><img src="images/open.png" /></a></td>
+                </tr>
+            </table>
+        </nav>
+
+        <div id="test">
+
+        </div>
+
+
+
+    </div>
+
+    <div class="footer">
+        <div class="footer-container">
+            <p class="footer-text">Designed by Катя Непремудрая и Сестрица Алёнушка</p>
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/babel">
+
+    function getParam(sParamName)
+    {
+        var Params = location.search.substring(1).split("&");
+        var variable = "";
+        for (var i = 0; i < Params.length; i++)
+        {
+            if (Params[i].split("=")[0] == sParamName)
+            {
+                if (Params[i].split("=").length > 1) variable = Params[i].split("=")[1];
+
+                return variable; // возвращаем его
+            }
+        }
+        return "";
+    }
+
+    var index;
+
+
+    class UserForm extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {_1: ""};
+            this.state = {_2: ""};
+            this.state = {_3: ""};
+            this.state = {_4: ""};
+            this.state = {_5: ""};
+            this.state = {_6: ""};
+            this.state = {_7: ""};
+            this.state = {_8: ""};
+            this.state = {_9: ""};
+            this.state = {_10: ""};
+
+
+            this.onChange1 = this.onChange1.bind(this);
+            this.onChange2 = this.onChange2.bind(this);
+            this.onChange3 = this.onChange3.bind(this);
+            this.onChange4 = this.onChange4.bind(this);
+            this.onChange5= this.onChange5.bind(this);
+            this.onChange6= this.onChange6.bind(this);
+            this.onChange7= this.onChange7.bind(this);
+            this.onChange8= this.onChange8.bind(this);
+            this.onChange9= this.onChange9.bind(this);
+            this.onChange10= this.onChange10.bind(this);
+
+            this.handleSubmit = this.handleSubmit.bind(this);
+        }
+
+        onChange1(e) {
+            var val = e.target.value;
+            this.setState({_1: val});
+            console.log(val);
+        }
+
+        onChange2(e) {
+            var val = e.target.value;
+            this.setState({_2: val});
+        }
+
+        onChange3(e) {
+            var val = e.target.value;
+            this.setState({_3: val});
+        }
+
+        onChange4(e) {
+            var val = e.target.value;
+            this.setState({_4: val});
+        }
+
+        onChange5(e) {
+            var val = e.target.value;
+            this.setState({_5: val});
+        }
+
+        onChange6(e) {
+            var val = e.target.value;
+            this.setState({_6: val});
+        }
+
+        onChange7(e) {
+            var val = e.target.value;
+            this.setState({_7: val});
+        }
+
+        onChange8(e) {
+            var val = e.target.value;
+            this.setState({_8: val});
+        }
+
+        onChange9(e) {
+            var val = e.target.value;
+            this.setState({_9: val});
+        }
+
+        onChange10(e) {
+            var val = e.target.value;
+            this.setState({_10: val});
+        }
+
+        handleSubmit(e) {
+            e.preventDefault();
+         var result=0;
+         index=getParam("id");
+           // alert(this.state._1);
+             if(this.state._1=="true"){
+                 result++;
+             }
+            if(this.state._2=="true"){
+                result++;
+            }
+            if(this.state._3=="true"){
+                result++;
+            }
+            if(this.state._4=="true"){
+                result++;
+            }
+            if(this.state._5=="true"){
+                result++;
+            }
+            if(this.state._6=="true"){
+                result++;
+            }
+            if(this.state._7=="true"){
+                result++;
+            }
+            if(this.state._8=="true"){
+                result++;
+            }
+            if(this.state._9=="true"){
+                result++;
+            }
+            if(this.state._10=="true"){
+                result++;
+            }
+           // alert(result);
+            if(result>7){
+
+                axios.put('/gladiators/applyToSchool/'+index)
+                    .then(function (response) {
+                        console.log(response);
+                        alert("Вы поступили");
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        alert("Ошибка");
+                    });
+
+            }else {
+                alert("Неучам в школе не место.");
+            }
+
+        }
+
+        render() {
+            var t=this.onChangeIcon;
+            return (
+                    <form onSubmit={this.handleSubmit}>
+                        <p>
+                            <label>Причина возниконвения гладиаторских бой: </label><br />
+                            <input type="radio" name="1st" value="false" onChange={this.onChange1}/>Развлечение для римлян<br/>
+                            <input type="radio" name="1st" value="true" onChange={this.onChange1}/> Погребальный обряд<br/>
+                            <input type="radio" name="1st" value="false" onChange={this.onChange1}/>Меньше народа, больше кислорода<br/>
+                        </p>
+
+                        <p>
+                            <label>Сколько пар гладиаторов выдвинул на бой Цезарь, чтобы заручиться поддержкой толпы? </label><br />
+                            <input type="radio" name="2st" value="false" onChange={this.onChange2}/>60<br/>
+                            <input type="radio" name="2st" value="false" onChange={this.onChange2}/>120<br/>
+                            <input type="radio" name="2st" value="true" onChange={this.onChange2}/>320<br/>
+                        </p>
+
+                        <p>
+                            <label>Могли ли женщины участвовать в гладиаторских боях? </label><br />
+                            <input type="radio" name="3st" value="true" onChange={this.onChange3}/>Да<br/>
+                            <input type="radio" name="3st" value="false" onChange={this.onChange3}/>Нет<br/>
+                        </p>
+
+                        <p>
+                            <label>Как звали императора, участвовавшего в гладиаторских боях? </label><br />
+                            <input type="radio" name="4st" value="false" onChange={this.onChange4}/>Константин<br/>
+                            <input type="radio" name="4st" value="false" onChange={this.onChange4}/>Галлиен<br/>
+                            <input type="radio" name="4st" value="true" onChange={this.onChange4}/>Коммод<br/>
+
+                        </p>
+
+                        <p>
+                            <label>Как называлось гладиаторское морское сражение? </label><br />
+                            <input type="radio" name="5st" value="true" onChange={this.onChange5}/>Навмахия<br/>
+                            <input type="radio" name="5st" value="false" onChange={this.onChange5}/>Бестиарий<br/>
+                            <input type="radio" name="5st" value="false" onChange={this.onChange5}/>Секутор<br/>
+
+                        </p>
+
+                        <p>
+                            <label>Как с латинского переводится гладиатор?</label><br />
+                            <input type="radio" name="6st" value="false" onChange={this.onChange6}/>Боец<br/>
+                            <input type="radio" name="6st" value="true" onChange={this.onChange6}/>Меченосец<br/>
+                            <input type="radio" name="6st" value="false" onChange={this.onChange6}/>Силач<br/>
+                            <input type="radio" name="6st" value="false" onChange={this.onChange6}/>Защитник<br/>
+
+                        </p>
+
+                        <p>
+                            <label>Что должен сделать гладиатор, если он уже не может сражаться:</label><br />
+                            <input type="radio" name="7st" value="false" onChange={this.onChange7}/>Притвориться мертвым<br/>
+                            <input type="radio" name="7st" value="false" onChange={this.onChange7}/>Встать на колени<br/>
+                            <input type="radio" name="7st" value="true" onChange={this.onChange7}/>Поднять палец вверх<br/>
+                            <input type="radio" name="7st" value="false" onChange={this.onChange7}/>Поднять руки вверх<br/>
+
+                        </p>
+
+                        <p>
+                            <label>Что из перечисленного не является типом гладиаторов:</label><br />
+                            <input type="radio" name="8st" value="true" onChange={this.onChange8}/>Галлец<br/>
+                            <input type="radio" name="8st" value="false" onChange={this.onChange8}/>Мурмиллон<br/>
+                            <input type="radio" name="8st" value="false" onChange={this.onChange8}/>Эквит<br/>
+                            <input type="radio" name="8st" value="false" onChange={this.onChange8}/>Димахер<br/>
+
+                        </p>
+
+                        <p>
+                            <label>Самая знаменитая гладиаторская арена:</label><br />
+                            <input type="radio" name="9st" value="false" onChange={this.onChange9}/>Амфитеатр в Помпеях <br/>
+                            <input type="radio" name="9st" value="true" onChange={this.onChange9}/>Колизей<br/>
+                            <input type="radio" name="9st" value="false" onChange={this.onChange9}/>Арена ди Верона <br/>
+
+                        </p>
+
+                        <p>
+                            <label>Бои изобрели:</label><br />
+                            <input type="radio" name="10st" value="true" onChange={this.onChange10}/>Этруски<br/>
+                            <input type="radio" name="10st" value="false" onChange={this.onChange10}/>Римляне<br/>
+                            <input type="radio" name="10st" value="false" onChange={this.onChange10}/>Веронцы<br/>
+                            <input type="radio" name="10st" value="false" onChange={this.onChange10}/>Сицилийцы<br/>
+
+                        </p>
+
+                        <input type="submit" value="Check" class="add-this-city-button"/>
+                    </form>
+            );
+        }
+    }
+
+    ReactDOM.render(
+            <UserForm />,
+        document.getElementById("test")
+    );
+
+</script>
+
+</body>
+</html>

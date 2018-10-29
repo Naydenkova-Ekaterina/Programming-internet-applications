@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BuyGladiators</title>
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.25.0/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.3/axios.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.min.js"></script>
+
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/styleBuy.css" />
+
+
+    <script>
+        $(document).ready(function(){
+            $('.slider').bxSlider({
+                slideWidth:500,
+                moveSlides:2,
+                minSlides: 2,
+                maxSlides: 3
+            });
+        });
+    </script>
+</head>
+<body>
+
+<nav>
+    <img src="images/logo.png" />
+    <table id="menu">
+        <tr>
+            <td>
+                <ul id="nav">
+                    <li >
+
+                        <a href="#" title="Shop">BUY</a>
+
+                        <ul>
+
+                            <li><a href="BuyTickets.html">Tickets</a></li>
+
+                            <li><a href="BuyGladiators.html">Gladiators</a></li>
+                            <li><a href="BuyWeapons.html">Weapons</a></li>
+                            <li><a href="BuyArmors.html">Armors</a></li>
+
+                        </ul>
+
+                    </li></ul>
+            </td>
+            <td><a href="school.html">SCHOOL</a></td>
+            <td><a href="crud.html">CRUD</a></td>
+            <td><a href="PersonalArea.html"><img src="images/users.png" /></a></td>
+            <td><a href="#"><img src="images/open.png" /></a></td>
+        </tr>
+    </table>
+</nav>
+
+
+<div id="content" >
+
+</div>
+
+
+<div id="openModalWeapon" class="modalDialog">
+    <div>
+        <a href="#close" title="Закрыть" class="close">X</a>
+        <h2>Information</h2>
+        <div id="appUpdate"></div>
+    </div>
+</div>
+
+<div class="footer">
+    <div class="footer-container">
+        <p class="footer-text">Designed by Катя Непремудрая и Сестрица Алёнушка</p>
+    </div>
+
+</div>
+
+<script type="text/babel">
+
+    let tableTemplate;
+    class ImagesGladiators extends React.Component{
+        constructor(props) {
+            super(props);
+
+            this.onChangeId = this.onChangeId.bind(this);
+        }
+
+        onChangeId(e) {
+            var val = e.target.alt;
+            objectIndexForUpdate=e.target.alt;
+
+            $.ajax({
+                type:'GET',
+                url: '/gladiators/findOne/'+objectIndexForUpdate,
+                async: false,
+                success: function(response) {
+                    console.log(response);
+
+
+                    document.getElementById("lName").value=response.name;
+                    document.getElementById("lAge").value=response.age;
+                    document.getElementById("lCost").value=response.cost;
+                    document.getElementById("lJabber").value=response.jabberaddress;
+                    $("#lSchool option:selected").text(response.gladiatorialSchool.name);
+                    $("#lWeapon option:selected").text(response.weapon.name);
+                    $("#lArmor option:selected").text(response.armor.name);
+                    $("#lMaster option:selected").text(response.master.name);
+                    $("#lJob option:selected").text(response.job.name);
+
+                }
+            });
+
+        }
+
+        render(){
+            var t=this.onChangeId;
+            $.ajax({
+                type:'GET',
+                url: '/gladiators/findGladiatorsForSale',
+                async: false,
+                success: function(response) {
+
+                    answerV = response;
+                    console.log(response);
+
+                    tableTemplate = answerV.map((row, i) => {
+
+                        var index = row.id;
+                        var imageName=row.gladiatorimage;
+                        return <div><a href="#openModalWeapon"><img key={i} alt={index} onClick={t}  src={"images/"+imageName} width="300" height="450"/></a>
+                        </div>
+                    });
+
+                }
+            });
+
+            return(
+                    <div id="slider" class="slider">
+                        {tableTemplate}
+                    </div>
+            );
+
+        }
+    }
+
+    var answerV;
+
+
+    ReactDOM.render(
+            <ImagesGladiators/>,
+        document.getElementById('content')
+
+    );
+
+
+    /////////////UPDATE
+    var objectForUpdate;
+    var objectIndexForUpdate=0;
+
+    let schoolTemplate;
+    let weaponTemplate;
+    let armorTemplate;
+    let masterTemplate;
+    let jobTemplate;
+
+    class UserFormUpdate extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {name: ""};
+            this.state = {age: ""};
+            this.state = {cost: ""};
+            this.state = {jabberaddress: ""};
+            this.state={gladiatorialSchool:"Большая школа"};
+            this.state={weapon:"Вантуз"};
+            this.state={armor:"Латы"};
+            this.state={master:"Овидий"};
+            this.state={job:"Боец"};
+
+            this.onChangeName = this.onChangeName.bind(this);
+            this.onChangeAge = this.onChangeAge.bind(this);
+            this.onChangeCost = this.onChangeCost.bind(this);
+            this.onChangeJabberAddress = this.onChangeJabberAddress.bind(this);
+            this.onChangeGladiatorialSchool = this.onChangeGladiatorialSchool.bind(this);
+            this.onChangeWeapon = this.onChangeWeapon.bind(this);
+            this.onChangeArmor = this.onChangeArmor.bind(this);
+            this.onChangeMaster = this.onChangeMaster.bind(this);
+            this.onChangeJob = this.onChangeJob.bind(this);
+            this.handleSubmit = this.handleSubmit.bind(this);
+        }
+        onChangeName(e) {
+            var val = e.target.value;
+            this.setState({name: val});
+        }
+
+        onChangeAge(e) {
+            var val = e.target.value;
+            this.setState({age: val});
+        }
+
+        onChangeCost(e) {
+            var val = e.target.value;
+            this.setState({cost: val});
+        }
+
+        onChangeJabberAddress(e) {
+            var val = e.target.value;
+            this.setState({jabberaddress: val});
+        }
+
+        onChangeGladiatorialSchool(e) {
+            var val = e.target.value;
+            this.setState({gladiatorialSchool:val});
+        }
+
+        onChangeWeapon(e) {
+            var val = e.target.value;
+            this.setState({weapon:val});
+        }
+
+        onChangeArmor(e) {
+            var val = e.target.value;
+            this.setState({armor:val});
+        }
+
+        onChangeMaster(e) {
+            var val = e.target.value;
+            this.setState({master:val});
+        }
+
+        onChangeJob(e) {
+            var val = e.target.value;
+            this.setState({job:val});
+        }
+
+        handleSubmit(e) {
+            e.preventDefault();
+
+            //alert(objectIndexForUpdate);
+            axios.get('/masters/buyGladiator/'+objectIndexForUpdate)
+                .then(function (response) {
+                    console.log(response);
+                    alert("Гладиатор куплен");
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    alert("Ошибка:(");
+
+                });
+        }
+
+        render() {
+            return (
+                    <form onSubmit={this.handleSubmit}>
+                        <p>
+                            <label>Name :</label><br />
+                            <input id="lName" type="text" value={this.state.name} onChange={this.onChangeName} disabled/>
+                        </p>
+                        <p>
+                            <label>Age :</label><br />
+                            <input id="lAge" type="text" value={this.state.age} onChange={this.onChangeAge} disabled/>
+                        </p>
+                        <p>
+                            <label>Cost :</label><br />
+                            <input id="lCost" type="text" value={this.state.cost} onChange={this.onChangeCost} disabled/>
+                        </p>
+                        <p>
+                            <label>Jabber address :</label><br />
+                            <input id="lJabber" type="text" value={this.state.jabberaddress} onChange={this.onChangeJabberAddress} disabled/>
+                        </p>
+                        <p>
+                            <label>Gladiatorial School :</label><br />
+                            <select id="lSchool" selected={this.state.gladiatorialSchool} onClick={this.onChangeGladiatorialSchool} disabled>
+                                {schoolTemplate}
+                            </select>
+                        </p>
+                        <p>
+                            <label>Weapon :</label><br />
+                            <select id="lWeapon" selected={this.state.weapon} onClick={this.onChangeWeapon} disabled>
+                                {weaponTemplate}
+                            </select>
+                        </p>
+                        <p>
+                            <label>Armor :</label><br />
+                            <select id="lArmor" selected={this.state.armor} onClick={this.onChangeArmor} disabled>
+                                {armorTemplate}
+                            </select>
+                        </p>
+                        <p>
+                            <label>Master :</label><br />
+                            <select id="lMaster" selected={this.state.master} onClick={this.onChangeMaster} disabled>
+                                {masterTemplate}
+                            </select>
+                        </p>
+                        <p>
+                            <label>Job :</label><br />
+                            <select id="lJob" selected={this.state.job} onClick={this.onChangeJob} disabled>
+                                {jobTemplate}
+                            </select>
+                        </p>
+
+                        <input type="submit" value="Buy" class="add-this-city-button" />
+                    </form>
+
+            );
+        }
+    }
+
+    axios.get('/schools/findSchoolNames')
+        .then(function (response) {
+            console.log(response);
+
+            schoolTemplate = response.data.map((item, i) => {
+                return <option key={i}>{item}</option>
+            });
+
+            axios.get('/weapons/findWeaponNames')
+                .then(function (response) {
+
+                    console.log(response);
+
+                    weaponTemplate = response.data.map((item, i) => {
+                        return <option key={i}>{item}</option>
+                    });
+
+                    axios.get('/armors/findArmorNames')
+                        .then(function (response) {
+
+                            console.log(response);
+
+                            armorTemplate = response.data.map((item, i) => {
+                                return <option key={i}>{item}</option>
+                            });
+
+                            axios.get('/masters/findMasterNames')
+                                .then(function (response) {
+
+                                    console.log(response);
+
+                                    masterTemplate = response.data.map((item, i) => {
+                                        return <option key={i}>{item}</option>
+                                    });
+
+                                    axios.get('/jobs/findJobNames')
+                                        .then(function (response) {
+                                            console.log(response);
+
+                                            jobTemplate = response.data.map((item, i) => {
+                                                return <option key={i}>{item}</option>
+                                            });
+
+                                            ReactDOM.render(
+                                                    <UserFormUpdate />,
+                                                document.getElementById("appUpdate")
+                                            );
+
+                                        })
+
+
+
+                                })
+
+
+                        })
+
+
+                })
+
+        })
+
+
+
+</script>
+
+</body>
+</html>

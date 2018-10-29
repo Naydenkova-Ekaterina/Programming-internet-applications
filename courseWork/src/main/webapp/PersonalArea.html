@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Personal Area</title>
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.25.0/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.3/axios.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylePersonalArea.css" />
+</head>
+<body>
+
+<div class="wrapper">
+
+    <div id="content">
+        <nav>
+            <a href=""><img src="images/logo.png" /></a>
+            <table id="menu">
+                <tr>
+                    <td>
+                        <ul id="nav">
+                            <li >
+
+                                <a href="#" title="Shop">BUY</a>
+
+                                <ul>
+
+                                    <li><a href="BuyTickets.html">Tickets</a></li>
+
+                                    <li><a href="BuyGladiators.html">Gladiators</a></li>
+                                    <li><a href="BuyWeapons.html">Weapons</a></li>
+                                    <li><a href="BuyArmors.html">Armors</a></li>
+
+                                </ul>
+
+                            </li></ul>
+                    </td>
+                    <td><a href="school.html">SCHOOL</a></td>
+                    <td><a href="crud.html">CRUD</a></td>
+                    <td><a href="PersonalArea.html"><img src="images/users.png" /></a></td>
+                    <td><a href="#"><img src="images/open.png" /></a></td>
+                </tr>
+            </table>
+        </nav>
+
+        <div class="inner">
+            <div class="sidebar flex-box">
+                <div class="flex-block">
+                    <a href="#" class="sidebar-button" onclick="displayGladForm()">Profile</a>
+                </div>
+                <div class="flex-block">
+                    <a href="#" class="sidebar-button" onclick="displayPurchases()">Purchases</a>
+                </div>
+                <div class="flex-block">
+                    <a href="#" class="sidebar-button" onclick="displayMasterForm()">Become a master</a>
+                </div>
+            </div>
+
+
+
+            <div id="inner-content" class="inner-content">
+
+            </div>
+
+            <div id="become-master" class="inner-content">
+
+            </div>
+
+            <div id="purchases" class="inner-content">
+
+            </div>
+
+
+
+
+
+
+
+        </div>
+
+
+
+
+    </div>
+
+    <div id="openModal" class="modalDialog">
+        <div>
+            <a href="#close" title="Закрыть" class="close">X</a>
+            <h2>Choose an icon for your avatar</h2>
+            <div id="app">
+                <img src="images/1.png" alt="1.png" class="myImg" onClick="onChangeIcon(this)" width="50px" height="50px"/>
+                <img src="images/2.png" alt="2.png" class="myImg" onClick="onChangeIcon(this)" width="50px" height="50px"/>
+                <img src="images/3.png" alt="3.png" class="myImg" onClick="onChangeIcon(this)" width="50px" height="50px"/>
+                <img src="images/4.png" alt="4.png" class="myImg" onClick="onChangeIcon(this)" width="50px" height="50px"/>
+                <br/>
+                <a href="#close">Confirm</a>
+            </div>
+        </div>
+    </div>
+
+    <!--<div class="footer">
+        <div class="footer-container">
+            <p class="footer-text">Designed by Катя Непремудрая и Сестрица Алёнушка</p>
+        </div>
+
+    </div>-->
+
+</div>
+
+
+
+<script type="text/babel">
+
+    displayGladForm();
+    var icon="";
+
+    function onChangeIcon(e) {
+        $('.myImg').css("border","none");
+        icon=e.alt;
+        e.style.border="2px solid red";
+       // alert(icon);
+        document.getElementById("avatarImg").src="images/"+icon;
+    }
+
+
+    function displayGladForm() {
+        document.getElementById("become-master").style.display="none";
+        document.getElementById("inner-content").style.display="block";
+        document.getElementById("purchases").style.display="none";
+
+    }
+
+    function displayPurchases() {
+        document.getElementById("inner-content").style.display="none";
+        document.getElementById("purchases").style.display="block";
+        document.getElementById("become-master").style.display="none";
+
+    }
+
+    function displayMasterForm() {
+        document.getElementById("inner-content").style.display="none";
+        document.getElementById("become-master").style.display="block";
+        document.getElementById("purchases").style.display="none";
+
+
+    }
+
+
+    class GladiatorForm extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {name: ""};
+            this.state={age:""};
+            this.state={jabberaddress:""};
+            this.state={gladiatorimage:""};
+
+
+            this.onChangeName = this.onChangeName.bind(this);
+            this.onChangeAge = this.onChangeAge.bind(this);
+            this.onChangeJabberaddress = this.onChangeJabberaddress.bind(this);
+            this.onChangeGladiatorimage = this.onChangeGladiatorimage.bind(this);
+
+            this.handleSubmit = this.handleSubmit.bind(this);
+        }
+        onChangeName(e) {
+            var val = e.target.value;
+            this.setState({name: val});
+        }
+
+        onChangeAge(e) {
+            var val = e.target.value;
+            this.setState({age:val});
+        }
+
+        onChangeJabberaddress(e) {
+            var val = e.target.value;
+            this.setState({jabberaddress:val});
+        }
+
+        onChangeGladiatorimage(e) {
+            var val = e.target.value;
+            this.setState({gladiatorimage:val});
+        }
+
+        handleSubmit(e) {
+            e.preventDefault();
+
+            axios.put('/users/becomeGladiator', {
+                name: this.state.name,
+                age: this.state.age,
+                jabberaddress:this.state.jabberaddress,
+                gladiatorimage:icon
+            })
+                .then(function (response) {
+                    console.log(response);
+                    alert("Вы стали гладиатором");
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    alert("Вы не стали:(");
+
+                });
+        }
+
+        render() {
+            return (
+
+                    <form onSubmit={this.handleSubmit}>
+                        <div class="content-flex-box-column">
+                            <div class="welcome-text">Welcome, ПУПСИК :*</div>
+                            <div class="content-flex-box-row">
+
+                                <div class="flex-block-content center">
+                                    <img class="avatar" id="avatarImg" src="images/empty-avatar.gif" alt=""/>
+                                        <a class="avatar-button" href="#openModal">add an avatar</a>
+                                </div>
+
+                                <div class="flex-block-content">
+
+                                    <label>User name</label>
+                                    <input type="text" value={this.state.name} onChange={this.onChangeName}/>
+
+                                    <label>User age</label>
+                                    <input type="text" value={this.state.age} onChange={this.onChangeAge}/>
+
+                                    <label>User jabber address</label>
+                                    <input type="text" value={this.state.jabberaddress} onChange={this.onChangeJabberaddress}/>
+
+                                </div>
+                            </div>
+                            <div> <input type="submit" class="become-button" value="Become a gladiator"/></div>
+                        </div>
+                    </form>
+
+            );
+        }
+    }
+    ReactDOM.render(
+            <GladiatorForm />,
+        document.getElementById("inner-content")
+    )
+
+    class MasterForm extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {name: ""};
+            this.state = {title: ""};
+            this.state={city:"Рим"};
+
+            this.onChangeName = this.onChangeName.bind(this);
+            this.onChangeTitle = this.onChangeTitle.bind(this);
+            this.onChangeCity = this.onChangeCity.bind(this);
+            this.handleSubmit = this.handleSubmit.bind(this);
+        }
+        onChangeName(e) {
+            var val = e.target.value;
+            this.setState({name: val});
+        }
+
+        onChangeTitle(e) {
+            var val = e.target.value;
+            this.setState({title: val});
+        }
+
+        onChangeCity(e) {
+            var val = e.target.value;
+            this.setState({city:val});
+        }
+
+        handleSubmit(e) {
+            e.preventDefault();
+
+            var nameForPut=this.state.name;
+            var titleForPut=this.state.title;
+            var cityForPut;
+            axios.get('/cities/name/'+this.state.city)
+                .then(function (response) {
+                    cityForPut=response.data;
+                    console.log(response);
+
+
+                    axios.put('/users/becomeMaster', {
+                name: nameForPut,
+                title: titleForPut,
+                city:cityForPut
+            })
+                .then(function (response) {
+                    console.log(response);
+                    alert("Вы стали хозяином");
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    alert("Вы не стали:(");
+
+                });
+
+
+
+                });
+
+        }
+
+        render() {
+            return (
+
+                    <form onSubmit={this.handleSubmit}>
+                        <div class="content-flex-box-column">
+                            <div class="welcome-text">Welcome, USERNAME</div>
+                            <div class="content-flex-box-row">
+
+
+
+                                <div class="flex-block-content">
+
+                                    <label>User name</label>
+                                    <input type="text" value={this.state.name} onChange={this.onChangeName}/>
+
+                                    <label>User title</label>
+                                    <input type="text" value={this.state.title} onChange={this.onChangeTitle}/>
+
+                                    <label>City:</label><br />
+                                    <select selected={this.state.city} onChange={this.onChangeCity}>
+                                        {optionTemplate}
+                                    </select>
+
+                                </div>
+                            </div>
+                            <div> <input type="submit" class="become-button" value="Become a master"/></div>
+                        </div>
+                    </form>
+
+            );
+        }
+    }
+
+    let optionTemplate;
+    axios.get('/cities/getCityNames')
+        .then(function (response) {
+            console.log(response);
+
+            optionTemplate = response.data.map((item, i) => {
+                return <option key={i}>{item}</option>
+            });
+
+            ReactDOM.render(
+                    <MasterForm />,
+                document.getElementById("become-master")
+            );
+        })
+
+
+    /////////////////////////////////////////////////
+
+    let ticketsTemplate;
+    let weaponTemplate;
+    let armorTemplate;
+    let gladiatorsTemplate;
+
+    class PurchasesForm extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {id: ""};
+
+            this.onSellWeapon = this.onSellWeapon.bind(this);
+            this.onSellArmor = this.onSellArmor.bind(this);
+            this.onSellGladiator = this.onSellGladiator.bind(this);
+
+        }
+
+        onSellWeapon(e) {
+
+            axios.put('/gladiators/sellWeapon')
+                .then(function (response) {
+                    console.log(response);
+                    alert("Оружие продано");
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    alert("Ошибка");
+                });
+
+        }
+
+        onSellArmor(e) {
+            var val = e.target.value;
+
+            axios.put('/gladiators/sellArmor')
+                .then(function (response) {
+                    console.log(response);
+                    alert("Доспехи проданы.")
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    alert("Ошибка");
+                });
+
+        }
+
+        onSellGladiator(e) {
+            var val = e.target.value;
+
+            axios.put('/masters/sellGladiator/'+val)
+                .then(function (response) {
+                    console.log(response);
+                    alert("Гладиатор выставлен на продажу.")
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    alert("Ошибка");
+                });
+
+        }
+
+        render() {
+            var t=this.onSellWeapon;
+            var t2=this.onSellArmor;
+            var t3=this.onSellGladiator;
+
+//Tickets
+            $.ajax({
+                type:'GET',
+                url: '/users/getBoughtTickets',
+                async: false,
+                success: function(response) {
+
+                    console.log(response);
+
+                    ticketsTemplate = response.map((row, i) => {
+
+                        var index = row.id;
+                        var arenaName=row.fight.arena.name;
+                        var linkImage="images/"+row.fight.arena.arenaimage;
+                        var fightNumber=row.fight.id;
+                        var seatNumber=row.seat;
+                        var rowNumber=row.row;
+                        var cost=row.cost;
+                        return (
+                            <div key={i} class="my-flex-block item1 my-inner-flex-container" >
+                                <p class="item-text">Ticket to a fight</p>
+                                <img class="images-in-line" src={linkImage}/>
+                                <p class="item-text">Fight number:{fightNumber}</p>
+                                <p class="item-text">Arena:{arenaName}</p>
+                                <p class="item-text">Row:{rowNumber}</p>
+                                <p class="item-text">Seat:{seatNumber}</p>
+                                <p class="item-text">Cost:{cost}</p>
+
+                            </div>
+                        );
+                    });
+
+
+                }
+            });
+
+
+     //Weapon
+                  $.ajax({
+                type:'GET',
+                url: '/gladiators/findGladiatorWeapon',
+                async: false,
+                success: function(response) {
+
+                    console.log(response);
+                    var answer=response;
+                    if(response.id!=null) {
+                        weaponTemplate=weaponDiv(response,t);
+                    }
+                }
+            });
+//Armor
+            $.ajax({
+                type:'GET',
+                url: '/gladiators/findGladiatorArmor',
+                async: false,
+                success: function(response) {
+
+                    console.log(response);
+                    var answer=response;
+                    if(response.id!=null) {
+                        armorTemplate=armorDiv(response,t2);
+                    }
+                }
+            });
+
+            //Gladiators
+            $.ajax({
+                type:'GET',
+                url: '/masters/getBoughtGladiators',
+                async: false,
+                success: function(response) {
+
+                    console.log(response);
+
+                    gladiatorsTemplate = response.map((row, i) => {
+
+                        var index = row.id;
+                        var gladiatorName=row.name;
+                        var linkImage="images/"+row.gladiatorimage;
+                        var ageNumber=row.age;
+
+                        var cost=row.cost;
+                        return(
+                            <div key={i} class="my-flex-block item1 my-inner-flex-container" >
+                                <p class="item-text">Gladiator</p>
+                                <img class="images-in-line" height="250px" src={linkImage}/>
+                                <p class="item-text">Name:{gladiatorName}</p>
+                                <p class="item-text">Age:{ageNumber}</p>
+                                <p class="item-text">Cost:{cost}</p>
+                                <button type="button" class="test-button" onClick={t3} value={index}>Sell</button>
+
+                            </div>);
+
+                    });
+
+                }
+            });
+
+            return (
+
+                    <div class="my-flex-container">
+                        {ticketsTemplate}{weaponTemplate}{armorTemplate}{gladiatorsTemplate}
+                    </div>
+
+            );
+        }
+    }
+
+    function weaponDiv (response,t) {
+        var index = response.id;
+        var weaponName = response.name;
+        var linkImage = "images/" + response.weaponimage;
+        var damage = response.damage;
+        var cost = response.cost;
+        return(
+        <div class="my-flex-block item1 my-inner-flex-container">
+            <p class="item-text">Weapon</p>
+            <img class="images-in-line" src={linkImage}/>
+            <p class="item-text">Name:{weaponName}</p>
+            <p class="item-text">Damage:{damage}</p>
+            <p class="item-text">Cost:{cost}</p>
+            <button type="submit" class="test-button" onClick={t} value={index}>Sell</button>
+        </div>);
+    }
+
+    function armorDiv (response,t) {
+        var index = response.id;
+        var armorName = response.name;
+        var linkImage = "images/" + response.armorimage;
+        var defense = response.defense;
+        var cost = response.cost;
+        return(
+                <div class="my-flex-block item1 my-inner-flex-container">
+                    <p class="item-text">Armor</p>
+                    <img class="images-in-line" height="250px" src={linkImage}/>
+                    <p class="item-text">Name:{armorName}</p>
+                    <p class="item-text">Defense:{defense}</p>
+                    <p class="item-text">Cost:{cost}</p>
+                    <button type="submit" class="test-button" onClick={t} value={index}>Sell</button>
+                </div>);
+    }
+
+
+    let optionTemplate1;
+    axios.get('/cities/getCityNames')
+        .then(function (response) {
+            console.log(response);
+
+            optionTemplate1 = response.data.map((item, i) => {
+                return <option key={i}>{item}</option>
+            });
+
+            ReactDOM.render(
+                    <PurchasesForm />,
+                document.getElementById("purchases")
+            );
+        })
+
+</script>
+
+</body>
+</html>

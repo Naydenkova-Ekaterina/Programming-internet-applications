@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BuyWeapons</title>
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.25.0/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.3/axios.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.min.js"></script>
+
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/styleBuy.css" />
+
+
+    <script>
+        $(document).ready(function(){
+            $('.slider').bxSlider({
+                slideWidth:500,
+                moveSlides:2,
+                minSlides: 2,
+                maxSlides: 3
+            });
+        });
+    </script>
+</head>
+<body>
+<nav>
+    <img src="images/logo.png" />
+    <table id="menu">
+        <tr>
+            <td>
+                <ul id="nav">
+                    <li >
+
+                        <a href="#" title="Shop">BUY</a>
+
+                        <ul>
+
+                            <li><a href="BuyTickets.html">Tickets</a></li>
+
+                            <li><a href="BuyGladiators.html">Gladiators</a></li>
+                            <li><a href="BuyWeapons.html">Weapons</a></li>
+                            <li><a href="BuyArmors.html">Armors</a></li>
+
+                        </ul>
+
+                    </li></ul>
+            </td>
+            <td><a href="school.html">SCHOOL</a></td>
+            <td><a href="crud.html">CRUD</a></td>
+            <td><a href="PersonalArea.html"><img src="images/users.png" /></a></td>
+            <td><a href="#"><img src="images/open.png" /></a></td>
+        </tr>
+    </table>
+</nav>
+
+
+<div id="content" >
+
+</div>
+
+
+<div id="openModalWeapon" class="modalDialog">
+    <div>
+        <a href="#close" title="Закрыть" class="close">X</a>
+        <h2>Information</h2>
+        <div id="appUpdate"></div>
+    </div>
+</div>
+
+<div class="footer">
+    <div class="footer-container">
+        <p class="footer-text">Designed by Катя Непремудрая и Сестрица Алёнушка</p>
+    </div>
+
+</div>
+
+<script type="text/babel">
+
+    let tableTemplate;
+    class ImagesWeapons extends React.Component{
+        constructor(props) {
+            super(props);
+
+            this.onChangeId = this.onChangeId.bind(this);
+        }
+
+        onChangeId(e) {
+            var val = e.target.alt;
+            objectIndexForUpdate=e.target.alt;
+
+            $.ajax({
+                type:'GET',
+                url: '/weapons/findOne/'+objectIndexForUpdate,
+                async: false,
+                success: function(response) {
+                    console.log(response);
+                    objectForUpdate=response;
+                    document.getElementById("lName").value=response.name;
+                    document.getElementById("lDamage").value=response.damage;
+                    document.getElementById("lCost").value=response.cost;
+
+                }
+            });
+
+        }
+
+        render(){
+           var t=this.onChangeId;
+            $.ajax({
+                type:'GET',
+                url: '/weapons',
+                async: false,
+                success: function(response) {
+
+                    answerV = response;
+                    console.log(response);
+
+                    tableTemplate = answerV.map((row, i) => {
+
+                        var index = row.id;
+                        var imageName=row.weaponimage;
+                        return <div><a href="#openModalWeapon"><img key={i} alt={index} onClick={t}  src={"images/"+imageName} width="300" height="300"/></a>
+                        </div>
+                    });
+
+                }
+            });
+
+            return(
+<div id="slider" class="slider">
+                        {tableTemplate}
+</div>
+            );
+
+        }
+    }
+
+    var answerV;
+
+
+    ReactDOM.render(
+            <ImagesWeapons/>,
+        document.getElementById('content')
+
+    );
+
+
+    /////////////UPDATE
+    var objectForUpdate;
+    var objectIndexForUpdate=0;
+    class UserFormUpdate extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {name: ""};
+            this.state={damage:""};
+            this.state={reward:""};
+
+            this.onChangeName = this.onChangeName.bind(this);
+            this.onChangeDamage = this.onChangeDamage.bind(this);
+            this.onChangeCost = this.onChangeCost.bind(this);
+            this.handleSubmit = this.handleSubmit.bind(this);
+        }
+        onChangeName(e) {
+            var val = e.target.value;
+            this.setState({name: val});
+        }
+
+        onChangeDamage(e) {
+            var val = e.target.value;
+            this.setState({damage:val});
+        }
+
+        onChangeCost(e) {
+            var val = e.target.value;
+            this.setState({cost:val});
+        }
+
+        handleSubmit(e) {
+            e.preventDefault();
+          //  var nameForUpdate=document.getElementById("lName").value;
+           // var damageForUpdate=document.getElementById("lDamage").value;
+            //var costForUpdate=document.getElementById("lCost").value;
+
+            axios.get('/gladiators/buyWeapon/'+objectIndexForUpdate)
+                .then(function (response) {
+                    console.log(response);
+                    alert("Оружие куплено");
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    alert("Ошибка:(");
+
+                });
+        }
+
+        render() {
+            return (
+                    <form onSubmit={this.handleSubmit}>
+                        <p>
+                            <label>Name:</label><br />
+                            <input id="lName" type="text" value={this.state.name} onChange={this.onChangeName} disabled/>
+                        </p>
+                        <p>
+                            <label>Damage:</label><br />
+                            <input id="lDamage" type="text" value={this.state.damage} onChange={this.onChangeDamage} disabled/>
+                        </p>
+                        <p>
+                            <label>Cost:</label><br />
+                            <input id="lCost" type="text" value={this.state.cost} onChange={this.onChangeCost} disabled/>
+                        </p>
+
+                        <input type="submit" value="Buy" class="add-this-city-button"/>
+                    </form>
+
+            );
+        }
+    }
+
+    ReactDOM.render(
+            <UserFormUpdate />,
+        document.getElementById("appUpdate")
+    );
+
+
+</script>
+
+</body>
+</html>
