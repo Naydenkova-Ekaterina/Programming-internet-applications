@@ -50,22 +50,6 @@ public class UserController {
 
     }
 
-   /* @RequestMapping(value = "/authUser", method = RequestMethod.POST)
-    public Boolean findUserByUandP(@RequestBody User user){
-        User user1=repository.findByUsername(user.getUsername());
-        if(user1==null){
-            return false;
-        }
-        boolean check=false;
-        try {
-           check= Password.check(user.getPassword(), user1.getPassword());
-        }catch (Exception e)
-        {
-            System.err.println(e.fillInStackTrace());
-        }
-        return check;
-    }*/
-
     @RequestMapping(value = "/{username}", method = RequestMethod.GET)
     public User findByUsername(@PathVariable("username") String username){
 
